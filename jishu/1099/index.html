@@ -1,0 +1,717 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/logo.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Wicos">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="路漫漫其修远兮，吾将上下而求索。 【写在前面】 互联网从诞生之初，欲要增加用户和网站的交互，则创建了用户系统。从最初的不验证用户账号密码的阶段，慢慢的将用户账号密码作为验证的依据。在此阶段，用户名从最初的字母，到邮箱，再到后来的手机号（国内）。随着第三方社交网站的崛起，使用第三方用户多的社交网站登录慢慢成了新的潮流，这种登录方式的优势体现在省去了复杂的注册过程，是绝大多数用户愿意选择的登陆方法之">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一个基于Redis的扫码登录方案+实现思路">
+<meta property="og:url" content="https://www.wicos.me/jishu/1099/index.html">
+<meta property="og:site_name" content="Wicos&#39;s Blog.">
+<meta property="og:description" content="路漫漫其修远兮，吾将上下而求索。 【写在前面】 互联网从诞生之初，欲要增加用户和网站的交互，则创建了用户系统。从最初的不验证用户账号密码的阶段，慢慢的将用户账号密码作为验证的依据。在此阶段，用户名从最初的字母，到邮箱，再到后来的手机号（国内）。随着第三方社交网站的崛起，使用第三方用户多的社交网站登录慢慢成了新的潮流，这种登录方式的优势体现在省去了复杂的注册过程，是绝大多数用户愿意选择的登陆方法之">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/2022/03/1648483006-01d3f15cb6d733a801214168e62c13.jpg@1280w_1l_2o_100sh-960x441.jpg">
+<meta property="article:published_time" content="2022-03-28T19:34:23.000Z">
+<meta property="article:modified_time" content="2024-01-07T13:51:19.983Z">
+<meta property="article:author" content="Wicos">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/2022/03/1648483006-01d3f15cb6d733a801214168e62c13.jpg@1280w_1l_2o_100sh-960x441.jpg">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>一个基于Redis的扫码登录方案+实现思路 - Wicos&#39;s Blog.</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"www.wicos.me","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Wicos&#39;s Blog.</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>主页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/suixie" target="_self">
+                <i class="iconfont icon-pen"></i>
+                <span>随写</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/jishu" target="_self">
+                <i class="iconfont icon-code"></i>
+                <span>技术</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/xiangmu" target="_self">
+                <i class="iconfont icon-note"></i>
+                <span>项目</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/gallary/" target="_self">
+                <i class="iconfont icon-image"></i>
+                <span>画廊</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/2022/03/1648483006-01d3f15cb6d733a801214168e62c13.jpg@1280w_1l_2o_100sh-960x441.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="一个基于Redis的扫码登录方案+实现思路"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-03-28 19:34" pubdate>
+          星期一, 三月 28日 2022, 7:34 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          <!-- compatible with older versions-->
+          1.1k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          <!-- compatible with older versions-->
+          10 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">一个基于Redis的扫码登录方案+实现思路</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p><img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/2022/03/1648483006-01d3f15cb6d733a801214168e62c13.jpg@1280w_1l_2o_100sh-960x441.jpg" srcset="/img/loading.gif" lazyload> <em>路漫漫其修远兮，吾将上下而求索。</em> 【写在前面】 互联网从诞生之初，欲要增加用户和网站的交互，则创建了用户系统。从最初的不验证用户账号密码的阶段，慢慢的将用户账号密码作为验证的依据。在此阶段，用户名从最初的字母，到邮箱，再到后来的手机号（国内）。随着第三方社交网站的崛起，使用第三方用户多的社交网站登录慢慢成了新的潮流，这种登录方式的优势体现在省去了复杂的注册过程，是绝大多数用户愿意选择的登陆方法之一。但是随着移动设备的发展，手机上使用最原始的账号+密码的第三方登录便显得很多余。同时也很麻烦，随着二维码的普及，手机第三方社交平台的扫码登陆的优势就凸显了出来。这无疑是目前最简单的用户登录方式了。   【本文的方案】本次依托unicloud部分功能，虽然依托unicloud的部分功能，但是主体流程具有普适性。具体实现方式如下：用户访问登录页面，向后端请求创建随机登录二维码，后端返回随机二维码（其实返回一个随机的uuid即可，二维码的生成在前端即可完成，分担后端压力）同时将uuid与状态码存储在redis内，设置一个超时时间（如2min），用户持已登录设备扫描二维码，用户手机进入二维码页面，向redis发送一个匹配key的状态码，更新二维码为已扫描，用户的登录页面有登录与取消按钮，点击登录随机将用户ID发送至redis，同时将用户的token存储在redis，PC页面轮询后端状态查询端口，后端通过redis内状态码，确定是否同意登录。如果用户扫码后取消登录，则在redis删除该记录即可。流程图如下</p>
+<p><img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/2022/03/1648493808-01.png" srcset="/img/loading.gif" lazyload></p>
+<p>由于前端获取后端内容，在没有保持长连接的情况下，依旧采用的是长轮询，通过一遍遍不断地获取后端数据，在图中并未提现。   <strong>伪代码实现</strong> <img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/2022/03/1648494595-IMG_20220329_030850-478x640.jpg" srcset="/img/loading.gif" lazyload> 【实现效果】 [caption id&#x3D;”attachment_1103” align&#x3D;”aligncenter” width&#x3D;”894”]<img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/2022/03/1648494886-02.png" srcset="/img/loading.gif" lazyload> 用户打开登录页面[&#x2F;caption]   [caption id&#x3D;”attachment_1104” align&#x3D;”aligncenter” width&#x3D;”732”]<img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/2022/03/1648494931-03.png" srcset="/img/loading.gif" lazyload> Redis内已添加相应记录[&#x2F;caption]   [caption id&#x3D;”attachment_1106” align&#x3D;”aligncenter” width&#x3D;”285”]<img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/2022/03/1648495010-04.png" srcset="/img/loading.gif" lazyload alt="用户扫码"> 用户扫码[&#x2F;caption]   [caption id&#x3D;”attachment_1105” align&#x3D;”aligncenter” width&#x3D;”776”]<img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/2022/03/1648494963-05.png" srcset="/img/loading.gif" lazyload alt="扫码后Redis内对应UUID的state已修改"> 扫码后Redis内对应UUID的state已修改[&#x2F;caption] [caption id&#x3D;”attachment_1107” align&#x3D;”aligncenter” width&#x3D;”773”]<img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/2022/03/1648495068-06.png" srcset="/img/loading.gif" lazyload alt="点击登录后"> 点击登录后前端轮询到state为1表示已扫码[&#x2F;caption] [caption id&#x3D;”attachment_1108” align&#x3D;”aligncenter” width&#x3D;”690”]<img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/2022/03/1648495112-07.png" srcset="/img/loading.gif" lazyload alt="用户同意后更新Redis内容"> 用户同意后更新Redis内容[&#x2F;caption]   至此扫码登陆结束，您可能会有如下问题： 1，为什么要用Redis? 一方面得益于Redis快速读写的特点，另外一方面时没有必要将这种压力传递给数据库，并且UUID在业务的角度，持久化存储在数据库的意义并不大 2，你的扫码登录用在哪个方面？ 小程序采内扫码，可以将绑定的微信用户信息同步在目标网站。相当于跳过微信的扫码登录，这是最重要的优势。 3，如何保证不会出现数据交叉？ 首先，用户访问登录界面会给后端发送生成UUID的请求，UUID可以最大程度保证不会出现重复，因此用户扫描后在当前时间空间下将用户和UUID视作为一个整体。所以不存在数据交叉的情况。 4，还有改进的方面吗？ 首先应该限制某IP访问生成端口的频率，如果设置redis内对象的过期时间为2min，那么频率也应该设置为2min(或者一分种)。其次，还应该设置一个UUID过期的状态码，当Redis内取不到对应的数据时，状态码为-1. 5,……   【总结】以上只是一种最简单的方式实现扫码登陆，或许有更方便安全的方式存在，如果您有任何建议和意见希望在评论区留言。  祝愿本次空难所有罹难同胞长眠安息   ——Wicos 2022&#x2F;03&#x2F;29凌晨</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/jishu/" class="category-chain-item">技术</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>一个基于Redis的扫码登录方案+实现思路</div>
+      <div>https://www.wicos.me/jishu/1099/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Wicos</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年3月28日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/suixie/1115/" title="山山山">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">山山山</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/suixie/1090/" title="雀儿">
+                        <span class="hidden-mobile">雀儿</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="twikoo"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#comments', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/twikoo/1.6.8/twikoo.all.min.js', function() {
+        var options = Object.assign(
+          {"envId":"https://comment.wicos.me","region":"ap-shanghai","path":"window.location.pathname"},
+          {
+            el: '#twikoo',
+            path: 'window.location.pathname',
+            onCommentLoaded: function() {
+              Fluid.utils.listenDOMLoaded(function() {
+                var imgSelector = '#twikoo .tk-content img:not(.tk-owo-emotion)';
+                Fluid.plugins.imageCaption(imgSelector);
+                Fluid.plugins.fancyBox(imgSelector);
+              });
+            }
+          }
+        )
+        twikoo.init(options)
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+      <a target="_blank" rel="noopener" href="https://github.com/pidbid"><span>Pidbid Github</span></a>
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

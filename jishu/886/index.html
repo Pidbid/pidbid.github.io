@@ -1,0 +1,743 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/logo.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Wicos">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="当你觉得电脑太卡，也有可能是你该换鼠标了。同样，新的生活隐藏在表象之下。——Wicos  一，思考 最近为了恰饭，的确在Python上下了不少的功夫，主要围绕在数据的采集，数据处理，WS连接等方面。也写了很多无用的代码，走了一些弯路，因此记录下来一方面是防止自己忘记，另一方面也能时刻提醒自己，不再走弯路。 首先，一个软件，包含许多功能，每一个功能皆由若干个子模块组成，每一个子模块之间互相配合，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="对编码的理解以及Python代码小片段分享">
+<meta property="og:url" content="https://www.wicos.me/jishu/886/index.html">
+<meta property="og:site_name" content="Wicos&#39;s Blog.">
+<meta property="og:description" content="当你觉得电脑太卡，也有可能是你该换鼠标了。同样，新的生活隐藏在表象之下。——Wicos  一，思考 最近为了恰饭，的确在Python上下了不少的功夫，主要围绕在数据的采集，数据处理，WS连接等方面。也写了很多无用的代码，走了一些弯路，因此记录下来一方面是防止自己忘记，另一方面也能时刻提醒自己，不再走弯路。 首先，一个软件，包含许多功能，每一个功能皆由若干个子模块组成，每一个子模块之间互相配合，">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/2020/03/1583246303-20200303223810.jpg">
+<meta property="article:published_time" content="2020-03-03T16:32:29.000Z">
+<meta property="article:modified_time" content="2024-01-07T10:28:00.833Z">
+<meta property="article:author" content="Wicos">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/2020/03/1583246303-20200303223810.jpg">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>对编码的理解以及Python代码小片段分享 - Wicos&#39;s Blog.</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"www.wicos.me","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Wicos&#39;s Blog.</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>主页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/suixie" target="_self">
+                <i class="iconfont icon-pen"></i>
+                <span>随写</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/jishu" target="_self">
+                <i class="iconfont icon-code"></i>
+                <span>技术</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/xiangmu" target="_self">
+                <i class="iconfont icon-note"></i>
+                <span>项目</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/gallary/" target="_self">
+                <i class="iconfont icon-image"></i>
+                <span>画廊</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/2020/03/1583246303-20200303223810.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="对编码的理解以及Python代码小片段分享"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2020-03-03 16:32" pubdate>
+          星期二, 三月 3日 2020, 4:32 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          <!-- compatible with older versions-->
+          1.2k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          <!-- compatible with older versions-->
+          10 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">对编码的理解以及Python代码小片段分享</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p><img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/2020/03/1583246303-20200303223810.jpg" srcset="/img/loading.gif" lazyload></p>
+<blockquote>
+<p>当你觉得电脑太卡，也有可能是你该换鼠标了。同样，新的生活隐藏在表象之下。——Wicos</p>
+</blockquote>
+<p><strong>一，思考</strong> 最近为了恰饭，的确在Python上下了不少的功夫，主要围绕在数据的采集，数据处理，WS连接等方面。也写了很多无用的代码，走了一些弯路，因此记录下来一方面是防止自己忘记，另一方面也能时刻提醒自己，不再走弯路。 首先，一个软件，包含许多功能，每一个功能皆由若干个子模块组成，每一个子模块之间互相配合，功能之间也能互相配合。虽然看起来是包含的关系，实则处处相通。终究都逃不过软件设计的流程，简单的总结为：分析设计，编码，测试，交付。 在分析的过程中要对软件的功能，数据做好规划，在后期的开发过程中才能少走弯路。此为万物的初始，良好的开端等于成功的一半。 在编码的过程中，由于代码是可复用的，同一个层次的功能应该使用一套代码来实现。减少工作量，比如开发数据发送的功能：数据的发送主要由以下几个步骤，1，建立连接：该过程中要涉及到身份的认证。2，数据传输：传输的数据编码方式，采用什么协议等。3，断开连接：在数据传送完毕之后断开连接，释放资源。在A功能中数据发送可以调用它，在B功能中数据发送同样可以调用它。编码中还需要注意数据的“同步利用”，主要在数据库的设计，数据文件的存储方面，每次存储数据时，相同的数据不同的类型可以采用同一个数据库来存储，将类型修改即可，这样调用起来更方便。变量的命名同样重要，例如我习惯于PHP的驼峰法命名方式，在编写Python的代码时也习惯使用驼峰法命名，有人喜欢下划线方式命名，各有千秋。只要注意变量区分大小写，不要使用保留的关键字。python遵循至繁归于至简(“Simplicity is the ultimate sophistication”)，但是代码量的多少不能绝对代表一个代码质量的好坏，在变量命名方面，myName 绝对比mN好，同样的my_name比m_n好。即使后者代码量更少，但是不便于阅读。我始终认同一句话，代码时写给人看的，顺便能在机器上运行。 测试过程也尤为重要，因为你无法预测使用者会怎么使用它，好比你做出来一条鱼，按照常理这条鱼时用来吃的，而不是用来划船或者开锁的，更不是通过鼻孔吃下去的。因此测试的过程要尽可能包含所有可能的情况。 路漫漫其修远兮，要多向大牛学习啊！ <strong>二：小代码片段</strong> 1，操作json,读写</p>
+<blockquote>
+<p>import json def readJson(filepath): with open(filepath,’rb’) as fp: return json.load(fp) def writeJson(filepath,data): with open(filepath,’w+’,encoding&#x3D;’utf-8’) as fp: json.dump(data, fp, indent&#x3D;4)</p>
+</blockquote>
+<p>2,通过字典的value获取字典的key</p>
+<blockquote>
+<p>1)dictKey &#x3D; list(dict.values().index(dictValue))#根据list来获取，缺点是value必须时唯一的 2)dictKey &#x3D; [dictKey for dictKey in dict if a[dictKey]&#x3D;&#x3D;dictValue][0] #万能方法</p>
+</blockquote>
+<p>3,判断输入的内容是否符合某条件</p>
+<blockquote>
+<p>#判断是否大于1 a &#x3D; True if in &gt; 1 else False #模拟abs() x &#x3D; a - b if a &gt; b else b - a</p>
+</blockquote>
+<p>4,合理利用set set在python中理解为集合</p>
+<blockquote>
+<p>创建它：a &#x3D; set() 或者 a &#x3D; {1,2,…,n} 创建一个空的集合必须使用set(),而不是 {}，后者是用来创建空字典的。 a &#x3D; {1,2,3} b &#x3D; {3,4,5} a&amp;b &#x3D; {3}#交集 ab &#x3D; {1,2,3,4,5} #并集 a^b &#x3D; {1,2,4,5} #并集相对交集的补集</p>
+</blockquote>
+<p>5,元组的利用</p>
+<blockquote>
+<p>for dictKey,dictValue in dict.items(): print(dictKey,dictValue) 其中dict.items()就是将dict转化为一个dict_items，内部由元组组成，每个元组第一个对应字典的key第二个对应字典的value 因此本质还是对tuple的操作。</p>
+</blockquote>
+<p>6,join()的使用</p>
+<blockquote>
+<p>join()用来将序列中的字符用指定的字符连接生成新的字符串 比如： a &#x3D; (‘I am wicos’,’1000’) b &#x3D; “-“ c &#x3D; b.join(a) print(c) –&gt;I an wicos-1000</p>
+</blockquote>
+<p>  以上，暂时能想到的就以上6个，未来遇到了再补上，最近都没什么机会读书，一定要抽出时间按来阅读。分享一首一如既往爱的摇滚音乐。——wicos 2020.3.4凌晨</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/jishu/" class="category-chain-item">技术</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>对编码的理解以及Python代码小片段分享</div>
+      <div>https://www.wicos.me/jishu/886/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Wicos</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2020年3月3日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/suixie/889/" title="春寒">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">春寒</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/jishu/880/" title="让发微博变得简单些-微博Python -API">
+                        <span class="hidden-mobile">让发微博变得简单些-微博Python -API</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="twikoo"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#comments', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/twikoo/1.6.8/twikoo.all.min.js', function() {
+        var options = Object.assign(
+          {"envId":"https://comment.wicos.me","region":"ap-shanghai","path":"window.location.pathname"},
+          {
+            el: '#twikoo',
+            path: 'window.location.pathname',
+            onCommentLoaded: function() {
+              Fluid.utils.listenDOMLoaded(function() {
+                var imgSelector = '#twikoo .tk-content img:not(.tk-owo-emotion)';
+                Fluid.plugins.imageCaption(imgSelector);
+                Fluid.plugins.fancyBox(imgSelector);
+              });
+            }
+          }
+        )
+        twikoo.init(options)
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+      <a target="_blank" rel="noopener" href="https://github.com/pidbid"><span>Pidbid Github</span></a>
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

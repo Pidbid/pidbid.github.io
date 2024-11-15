@@ -1,0 +1,738 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/logo.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Wicos">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="前言：人工智能，人机交互。越来越热门，人和机器之间的交互有多种方式，语音交流是海叔认为截止目前为止最简单，最有效，也最为成熟的一种方式。所以通过百度AI-API和图灵机器人的API简单的实现了人机对话交互。 工具：  1，百度AI-API（可在百度AI平台申请，其本质就是语音识别，语音合成API http:&#x2F;&#x2F;ai.baidu.com&#x2F;）  2，图灵机器人API（http:&#x2F;&#x2F;www.tulin">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【Python语音对话机器人的实现】使用百度AI-API，图灵机器人API实现语音对话机器人的思路（附代码）">
+<meta property="og:url" content="https://www.wicos.me/jishu/388/index.html">
+<meta property="og:site_name" content="Wicos&#39;s Blog.">
+<meta property="og:description" content="前言：人工智能，人机交互。越来越热门，人和机器之间的交互有多种方式，语音交流是海叔认为截止目前为止最简单，最有效，也最为成熟的一种方式。所以通过百度AI-API和图灵机器人的API简单的实现了人机对话交互。 工具：  1，百度AI-API（可在百度AI平台申请，其本质就是语音识别，语音合成API http:&#x2F;&#x2F;ai.baidu.com&#x2F;）  2，图灵机器人API（http:&#x2F;&#x2F;www.tulin">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/2018/02/2018020414423081-853x640.jpg">
+<meta property="article:published_time" content="2018-02-04T07:10:27.000Z">
+<meta property="article:modified_time" content="2024-01-07T10:01:04.220Z">
+<meta property="article:author" content="Wicos">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/2018/02/2018020414423081-853x640.jpg">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>【Python语音对话机器人的实现】使用百度AI-API，图灵机器人API实现语音对话机器人的思路（附代码） - Wicos&#39;s Blog.</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"www.wicos.me","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Wicos&#39;s Blog.</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>主页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/suixie" target="_self">
+                <i class="iconfont icon-pen"></i>
+                <span>随写</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/jishu" target="_self">
+                <i class="iconfont icon-code"></i>
+                <span>技术</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/xiangmu" target="_self">
+                <i class="iconfont icon-note"></i>
+                <span>项目</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/gallary/" target="_self">
+                <i class="iconfont icon-image"></i>
+                <span>画廊</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/2018/02/2018020414423081-853x640.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="【Python语音对话机器人的实现】使用百度AI-API，图灵机器人API实现语音对话机器人的思路（附代码）"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2018-02-04 07:10" pubdate>
+          星期日, 二月 4日 2018, 7:10 早上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          <!-- compatible with older versions-->
+          654 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          <!-- compatible with older versions-->
+          6 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">【Python语音对话机器人的实现】使用百度AI-API，图灵机器人API实现语音对话机器人的思路（附代码）</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p><img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/2018/02/2018020414423081-853x640.jpg" srcset="/img/loading.gif" lazyload></p>
+<p>前言：人工智能，人机交互。越来越热门，人和机器之间的交互有多种方式，语音交流是海叔认为截止目前为止最简单，最有效，也最为成熟的一种方式。所以通过百度AI-API和图灵机器人的API简单的实现了人机对话交互。</p>
+<p>工具：</p>
+<p> 1，百度AI-API（可在百度AI平台申请，其本质就是语音识别，语音合成API <a target="_blank" rel="noopener" href="http://ai.baidu.com/">http://ai.baidu.com/</a>）</p>
+<p> 2，图灵机器人API（<a target="_blank" rel="noopener" href="http://www.tuling123.com/">http://www.tuling123.com/</a>）</p>
+<p>思路：录音——百度语音识别为文字——提交图灵机器人——图灵机器人返回文字——百度语音合成——播放合成文件</p>
+<p>代码：</p>
+<p>from aip import AipSpeech<br>import json<br>import requests as rq<br>import os<br>import playsound<br>import wave<br>from pyaudio import PyAudio,paInt16</p>
+<p>“”” 你的 百度AI平台 APPID AK SK “””<br>APP_ID &#x3D; ‘APP_ID’<br>API_KEY &#x3D; ‘APP_KEY’<br>SECRET_KEY &#x3D; ‘S_K ‘</p>
+<p>client &#x3D; AipSpeech(APP_ID, API_KEY, SECRET_KEY)<br>“””录音”””<br>framerate&#x3D;16000<br>NUM_SAMPLES&#x3D;2000<br>channels&#x3D;1<br>sampwidth&#x3D;2<br>TIME&#x3D;2<br>def save_wave_file(filename,data):<br>    ‘’’save the date to the wavfile’’’<br>    wf&#x3D;wave.open(filename,’wb’)<br>    wf.setnchannels(channels)<br>    wf.setsampwidth(sampwidth)<br>    wf.setframerate(framerate)<br>    wf.writeframes(b””.join(data))<br>    wf.close()</p>
+<p>def my_record():<br>    pa&#x3D;PyAudio()<br>    stream&#x3D;pa.open(format &#x3D; paInt16,channels&#x3D;1,<br>                   rate&#x3D;framerate,input&#x3D;True,<br>                   frames_per_buffer&#x3D;NUM_SAMPLES)<br>    my_buf&#x3D;[]<br>    count&#x3D;0<br>    while count&lt;TIME*15:#控制录音时间<br>        string_audio_data &#x3D; stream.read(NUM_SAMPLES)<br>        my_buf.append(string_audio_data)<br>        count+&#x3D;1<br>        print(‘.’)<br>        os.system(‘cls’)<br>    save_wave_file(‘01.wav’,my_buf)<br>    stream.close()</p>
+<p>“””录音”””<br>def luyin():<br>    my_record()<br>    print(‘over’)</p>
+<p>“””调用百度语音识别”””</p>
+<h1 id="读取文件"><a href="#读取文件" class="headerlink" title="读取文件"></a>读取文件</h1><p>def get_file_content(filePath):<br>    with open(filePath, ‘rb’) as fp:<br>        return fp.read()</p>
+<h1 id="识别本地文件"><a href="#识别本地文件" class="headerlink" title="识别本地文件"></a>识别本地文件</h1><p>def shibie():<br>    get&#x3D;client.asr(get_file_content(‘01.wav’), ‘wav’, 16000, {‘lan’: ‘zh’,})<br>    new&#x3D;get[‘result’][0]<br>    qs&#x3D;new<br>    return qs<br>“””图灵机器人API”””<br>def tuling(qs):<br>    link&#x3D;’图灵API前端’+qs+’&amp;key&#x3D;API的KEY’<br>    get&#x3D;rq.post(link)<br>    p&#x3D;get.json()<br>    text&#x3D;p[‘text’]<br>    return text</p>
+<p>“””调用百度语音合成”””<br>def hecheng(text):<br>    result  &#x3D; client.synthesis(text, ‘zh’, 1, {‘vol’: 5,’per’: 4,’spd’: 4,’pit’: 6,})<br>    if not isinstance(result, dict):<br>        with open(‘auido.mp3’, ‘wb’) as f:<br>            f.write(result)<br>def play():<br>    filename&#x3D;’auido.mp3’<br>    playsound.playsound(filename,True)</p>
+<p>def dell():<br>    os.remove(‘auido.mp3’)<br>    os.remove(‘01.wav’)</p>
+<p>luyin()<br>qs&#x3D;shibie()<br>text&#x3D;tuling(qs)<br>hecheng(text)<br>play()<br>dell()</p>
+<p>注意：百度相关API和图灵机器人API需要自行申请，但是图灵API每天的使用次数为1000次。百度的调用次数相对多一些。</p>
+<p>开源地址：<a target="_blank" rel="noopener" href="https://github.com/Pidbid/api-talk">https://github.com/Pidbid/api-talk</a></p>
+<p>参考：Python写一个录音小程序（CSDN：<a target="_blank" rel="noopener" href="http://blog.csdn.net/yexiaohhjk/article/details/73132562">http://blog.csdn.net/yexiaohhjk/article/details/73132562</a>）</p>
+<p> 最让我感动的是这位作者在他的“原创声明”中这样写到：版权声明：朋友们，虽然这个世界日益浮躁起来，只要能够为了当时纯粹的梦想和感动坚持努力下去，不管其它人怎么样，我们也能够保持自己的本色走下去。 </p>
+<p>写在最后：这只是小小的练手程序，没有任何技术含量，高手勿喷。</p>
+<p>最后，依旧奉上歌曲一首。永远年轻——海叔 2018年2月4日</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/jishu/" class="category-chain-item">技术</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>【Python语音对话机器人的实现】使用百度AI-API，图灵机器人API实现语音对话机器人的思路（附代码）</div>
+      <div>https://www.wicos.me/jishu/388/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Wicos</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2018年2月4日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/jishu/390/" title="关于本站">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">关于本站</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/jishu/386/" title="Python3不使用pygame模块播放MP3的方法（python3 play mp3 file without using pygame）">
+                        <span class="hidden-mobile">Python3不使用pygame模块播放MP3的方法（python3 play mp3 file without using pygame）</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="twikoo"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#comments', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/twikoo/1.6.8/twikoo.all.min.js', function() {
+        var options = Object.assign(
+          {"envId":"https://comment.wicos.me","region":"ap-shanghai","path":"window.location.pathname"},
+          {
+            el: '#twikoo',
+            path: 'window.location.pathname',
+            onCommentLoaded: function() {
+              Fluid.utils.listenDOMLoaded(function() {
+                var imgSelector = '#twikoo .tk-content img:not(.tk-owo-emotion)';
+                Fluid.plugins.imageCaption(imgSelector);
+                Fluid.plugins.fancyBox(imgSelector);
+              });
+            }
+          }
+        )
+        twikoo.init(options)
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+      <a target="_blank" rel="noopener" href="https://github.com/pidbid"><span>Pidbid Github</span></a>
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

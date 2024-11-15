@@ -1,0 +1,741 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/logo.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Wicos">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="写在前面：no doubt I shall emerge from it all a different man, but quite who I’ve not found out.—— 图灵 首先我们要明白什么是SessionId 和什么是 Session: 1，如果我们要想了解SessionId和Session，我们必须先了解Cookies。当我们首次登录某网站时，输入用户名密码后会得到一个c">
+<meta property="og:type" content="article">
+<meta property="og:title" content="对SessionId会话攻击的简单理解与分析">
+<meta property="og:url" content="https://www.wicos.me/jishu/621/index.html">
+<meta property="og:site_name" content="Wicos&#39;s Blog.">
+<meta property="og:description" content="写在前面：no doubt I shall emerge from it all a different man, but quite who I’ve not found out.—— 图灵 首先我们要明白什么是SessionId 和什么是 Session: 1，如果我们要想了解SessionId和Session，我们必须先了解Cookies。当我们首次登录某网站时，输入用户名密码后会得到一个c">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/2019/04/1554107884-u10877766611757937663fm26gp0.jpg">
+<meta property="article:published_time" content="2019-04-01T10:11:01.000Z">
+<meta property="article:modified_time" content="2024-01-07T10:01:04.250Z">
+<meta property="article:author" content="Wicos">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/2019/04/1554107884-u10877766611757937663fm26gp0.jpg">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>对SessionId会话攻击的简单理解与分析 - Wicos&#39;s Blog.</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"www.wicos.me","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Wicos&#39;s Blog.</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>主页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/suixie" target="_self">
+                <i class="iconfont icon-pen"></i>
+                <span>随写</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/jishu" target="_self">
+                <i class="iconfont icon-code"></i>
+                <span>技术</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/xiangmu" target="_self">
+                <i class="iconfont icon-note"></i>
+                <span>项目</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/gallary/" target="_self">
+                <i class="iconfont icon-image"></i>
+                <span>画廊</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/2019/04/1554107884-u10877766611757937663fm26gp0.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="对SessionId会话攻击的简单理解与分析"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2019-04-01 10:11" pubdate>
+          星期一, 四月 1日 2019, 10:11 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          <!-- compatible with older versions-->
+          1.6k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          <!-- compatible with older versions-->
+          14 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">对SessionId会话攻击的简单理解与分析</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p><img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/2019/04/1554107884-u10877766611757937663fm26gp0.jpg" srcset="/img/loading.gif" lazyload>写在前面：no doubt I shall emerge from it all a different man, but quite who I’ve not found out.—— 图灵 首先我们要明白什么是SessionId 和什么是 Session:</p>
+<p>1，如果我们要想了解SessionId和Session，我们必须先了解<strong>Cookies</strong>。当我们首次登录某网站时，输入用户名密码后会得到一个cookie，这个cookie会保存在你登录的浏览器（or客户端）中。当你下次重新访问这个页面（网站）的时候首先会判断你的cookies是否过期，如果过期则会让你重新登录，如果没有过期则会直接登录。但是cookie并不是一个很安全的东西，如果B获取到A登录的cookie，在B的PC上依然可以不输入账号和密码进行登入操作。</p>
+<p>2，所以部分网站会采用<strong>Session与SessionId配合</strong>的方式进行登陆判断。我们首先要了解Session是如何产生的，Session与SessionId之间有什么关系：</p>
+<p>2.1 Session的产生过程：我么可以简单的理解为&lt;合法用户访问→产生Session→判断SessionId合法性→确定&#x2F;拒绝返回Session&gt;我么可以简单的理解为如果用户提交的SessionId在服务器的内存中存在，即判断这个用户是合法的。就会返回用户的数据以及可以进行一系列的操作。我们可以简单的理解为：有SessionId就可以或缺到Session内容</p>
+<p>2.2 如何产生SessionId？</p>
+<p>2.2.1本地产生SessionId且不变：这是一种最常见的产生SessionId的方式，即用户首次访问时，本地产生一个SessionId_A。如果用户输入的账号和密码正确，这个SessionId_A将会存储进服务器。那么拥有这个SessionId_A的所有人都拥有这个账号的操作权限。我们可以简单的理解为:张三家的门第一次用钥匙打开后的一段时间内，可以允许穿白衬衫的人进入。所以如果你穿白衬衫，即使没有要钥匙你依然可以进入张三家。</p>
+<p>2.2.2服务器产生SessionId：当用户输入账号和密码的时候，如果输入的账号密码合法，则会返回一个有效的SessionId。用户在一定的时间段内访问这个网站，依旧可以保持登录。同样的，这个也会造成一个问题就是如果你的SessionId泄露，其他人依旧可以拿到Session的内容。这里我们可以理解为和上一种方法有相同的弊端：穿着白衬衫就可以进入张三家，但是不同的是这次的白衬衫牌子只有张三一个人知道，其他人穿着白衬衫还是无法进入张三家。</p>
+<p>2.2.3你可能会想开发者是不是吃饱了撑的，为什么要使用2.2.2中的方法产生SessionId？因为这样可以避免一个简单的SessionId会话攻击，下面我们模拟一个场景：</p>
+<p>1.Attacker先打开一个网站<a target="_blank" rel="noopener" href="http://www.baidu.com,然后服务器会回复他一个session/">http://www.baidu.com，然后服务器会回复他一个session</a> id。比如SID&#x3D;abcdefg。Attacker把这个id记下了。 2.Attacker给UserA发送一个电子邮件，他假装是什么推销什么，诱导UserA点击链接<a target="_blank" rel="noopener" href="http://unsafe/?SID=abcdefg%EF%BC%8CSID%E5%90%8E%E9%9D%A2%E6%98%AFAttacker%E8%87%AA%E5%B7%B1%E7%9A%84session">http://unsafe/?SID=abcdefg，SID后面是Attacker自己的session</a> id。 3.UserA被吸引了，点击了<a target="_blank" rel="noopener" href="http://unsafe/?SID=abcdefg%EF%BC%8C%E5%83%8F%E5%BE%80%E5%B8%B8%E4%B8%80%E6%A0%B7%EF%BC%8C%E8%BE%93%E5%85%A5%E4%BA%86%E8%87%AA%E5%B7%B1%E7%9A%84%E5%B8%90%E5%8F%B7%E5%92%8C%E5%8F%A3%E4%BB%A4%E4%BB%8E%E8%80%8C%E7%99%BB%E5%BD%95%E5%88%B0%E9%93%B6%E8%A1%8C%E7%BD%91%E7%AB%99%E3%80%82">http://unsafe/?SID=abcdefg，像往常一样，输入了自己的帐号和口令从而登录到银行网站。</a> 4.因为服务器的session id不改变，现在Attacker点击<a target="_blank" rel="noopener" href="http://unsafe/?SID=abcdefg%E5%90%8E%EF%BC%8C%E4%BB%96%E5%B0%B1%E6%8B%A5%E6%9C%89%E4%BA%86Alice%E7%9A%84%E8%BA%AB%E4%BB%BD%E3%80%82%E5%8F%AF%E4%BB%A5%E4%B8%BA%E6%89%80%E6%AC%B2%E4%B8%BA%E4%BA%86%E3%80%82">http://unsafe/?SID=abcdefg后，他就拥有了Alice的身份。可以为所欲为了。</a></p>
+<p>来源：<a target="_blank" rel="noopener" href="https://blog.csdn.net/du_chao_qun/article/details/51966169">https://blog.csdn.net/du_chao_qun&#x2F;article&#x2F;details&#x2F;51966169</a></p>
+<p>2.3 SessionId的存储：前面我们提到使用单纯的cookies存储登录信息不是一个安全的所以我们使用了SessionId和Session配合的方法。与此同时，但是我们的SessionId终究要存储到本地客户端，所以我们一般采用以下几种存储方法：</p>
+<p>2.3.1 使用cookie保存SessionId，这样在交互过程中浏览器可以自动的按照规则把这个标识发送给服务器。 2.3.2 由于cookie可以被人为的禁止，必须有其它的机制以便在cookie被禁止时仍然能够把session id传递回服务器，经常采用的一种技术叫做URL重写，就是把session id附加在URL路径的后面，附加的方式也有两种，一种是作为URL路径的附加信息，另一种是作为查询字符串附加在URL后面。网络在整个交互过程中始终保持状态，就必须在每个客户端可能请求的路径后面都包含这个session id。 2.3.3 另一种技术叫做表单隐藏字段。就是服务器会自动修改表单，添加一个隐藏字段，以便在表单提交时能够把session id传递回服务器。</p>
+<p>来源：<a target="_blank" rel="noopener" href="https://www.cnblogs.com/yaowen/p/4819018.html">https://www.cnblogs.com/yaowen/p/4819018.html</a></p>
+<p>2.4 如何伪造SessionId？伪造SessionId的办法大同小异，这里只讲其中一种：【伪造在cookies中存储的SessionId】</p>
+<p>在客户端（这里使用Chromel浏览器）按F12进入开发者模式，在console中输入：document.cookies&#x3D;”key&#x3D;value”(注：其中的key和value就是SessionId和SessionId的值，即document.cookies&#x3D;”SessionId&#x3D;value”)。</p>
+<p>2.5 如果我要进行SessionId会话攻击那么难点在哪？</p>
+<p><strong>获取有效的SessionId。</strong></p>
+<p>3 如何防止“我”变成“张三”，说实话一旦使用SessionId，你就一定会有可能变成“张三”。区别就是这个可能性的高低而已。（如果你不知道什么是“张三”请回看上文。）</p>
+<p>3.1 对于普通用户：</p>
+<p>3.3.1 不轻易点击陌生人的发来的链接，包括扫描陌生的二维码。</p>
+<p>3.3.2 定时清理浏览器的cookies</p>
+<p>3.3.3 再有必要打开特殊的网站的时候请使用浏览器的“隐身”“无痕”等模式。</p>
+<p>3.2 对于网站的管理者：</p>
+<p>3.2.1 使用服务器产生的SessionId返回给用户再进行调用。</p>
+<p>3.2.2 设置Session的过期时间，如果有必要可设置更短的有效时间。</p>
+<p>3.3.3 如有必要请放弃Session与SessionId的模式，使用基于<strong>Token</strong>的身份验证模式。</p>
+<p>本文仅在安全性上对Session做了简单的评价，在性能方面不做评价，欢迎大神吐槽。 ——歪克士 2019年4月1日</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/jishu/" class="category-chain-item">技术</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>对SessionId会话攻击的简单理解与分析</div>
+      <div>https://www.wicos.me/jishu/621/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Wicos</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2019年4月1日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/jishu/626/" title="【matlab小记-1】画一个函数的实部，虚部，模，幅角">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">【matlab小记-1】画一个函数的实部，虚部，模，幅角</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/jishu/612/" title="智慧树自动刷课代码最新版">
+                        <span class="hidden-mobile">智慧树自动刷课代码最新版</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="twikoo"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#comments', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/twikoo/1.6.8/twikoo.all.min.js', function() {
+        var options = Object.assign(
+          {"envId":"https://comment.wicos.me","region":"ap-shanghai","path":"window.location.pathname"},
+          {
+            el: '#twikoo',
+            path: 'window.location.pathname',
+            onCommentLoaded: function() {
+              Fluid.utils.listenDOMLoaded(function() {
+                var imgSelector = '#twikoo .tk-content img:not(.tk-owo-emotion)';
+                Fluid.plugins.imageCaption(imgSelector);
+                Fluid.plugins.fancyBox(imgSelector);
+              });
+            }
+          }
+        )
+        twikoo.init(options)
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+      <a target="_blank" rel="noopener" href="https://github.com/pidbid"><span>Pidbid Github</span></a>
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

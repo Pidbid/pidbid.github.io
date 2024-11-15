@@ -1,0 +1,733 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/logo.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Wicos">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="[caption id&#x3D;”attachment_637” align&#x3D;”aligncenter” width&#x3D;”600”] 图1 市场上常见的数码管[&#x2F;caption] 市面上的数码管很多，但是我们平时学习用到的数码管还是比较少的。主要是7段数码管和8段数码管（8段比7段多一个“.”）。 首先我们要清楚数码管有两种：共阴极数码管和共阳极数码管，并且数">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【C51学习记录-1】共阴极，共阳极数码管的简单操作">
+<meta property="og:url" content="https://www.wicos.me/yingjian/636/index.html">
+<meta property="og:site_name" content="Wicos&#39;s Blog.">
+<meta property="og:description" content="[caption id&#x3D;”attachment_637” align&#x3D;”aligncenter” width&#x3D;”600”] 图1 市场上常见的数码管[&#x2F;caption] 市面上的数码管很多，但是我们平时学习用到的数码管还是比较少的。主要是7段数码管和8段数码管（8段比7段多一个“.”）。 首先我们要清楚数码管有两种：共阴极数码管和共阳极数码管，并且数">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/2019/04/1555309699-timg-1.jpg">
+<meta property="article:published_time" content="2019-04-15T08:50:43.000Z">
+<meta property="article:modified_time" content="2024-01-07T10:01:04.266Z">
+<meta property="article:author" content="Wicos">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/2019/04/1555309699-timg-1.jpg">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>【C51学习记录-1】共阴极，共阳极数码管的简单操作 - Wicos&#39;s Blog.</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"www.wicos.me","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Wicos&#39;s Blog.</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>主页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/suixie" target="_self">
+                <i class="iconfont icon-pen"></i>
+                <span>随写</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/jishu" target="_self">
+                <i class="iconfont icon-code"></i>
+                <span>技术</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/xiangmu" target="_self">
+                <i class="iconfont icon-note"></i>
+                <span>项目</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/gallary/" target="_self">
+                <i class="iconfont icon-image"></i>
+                <span>画廊</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/2019/04/1555309699-timg-1.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="【C51学习记录-1】共阴极，共阳极数码管的简单操作"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2019-04-15 08:50" pubdate>
+          星期一, 四月 15日 2019, 8:50 早上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          <!-- compatible with older versions-->
+          1.6k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          <!-- compatible with older versions-->
+          13 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">【C51学习记录-1】共阴极，共阳极数码管的简单操作</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>    [caption id&#x3D;”attachment_637” align&#x3D;”aligncenter” width&#x3D;”600”]<img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/2019/04/1555309699-timg-1.jpg" srcset="/img/loading.gif" lazyload> 图1 市场上常见的数码管[&#x2F;caption] 市面上的数码管很多，但是我们平时学习用到的数码管还是比较少的。主要是7段数码管和8段数码管（8段比7段多一个“.”）。 <strong>首先</strong>我们要清楚数码管有两种：共阴极数码管和共阳极数码管，并且数码管是由7或8个发光二极管构成的。二极管有正端和负端，分别为阳极和阴极。二极管最普遍的功能就是只允许电流由单一方向通过（称为顺向偏压），反向时阻断 （称为逆向偏压）。所以不难理解，发光二极管最普遍的功能也是允许电流单一方向通过，并且有电流通过时二极管被点亮。 因此：</p>
+<blockquote>
+<p>共阴极数码管：所有发光二极管的负端连在一起，作为公共端。 共阳极数码管：所有发光二极管的正端连在一起，作为公共端。</p>
+</blockquote>
+<p>[caption id&#x3D;”attachment_639” align&#x3D;”aligncenter” width&#x3D;”753”]<img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/2019/04/1555311427-smg.png" srcset="/img/loading.gif" lazyload> 图2 共阴极与共阳极数码管简单原理图[&#x2F;caption] <strong>其次</strong>我们以单个8段数码管为例，如下图：共阴极8段数码管 [caption id&#x3D;”attachment_638” align&#x3D;”aligncenter” width&#x3D;”500”]<img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/2019/04/1555310023-timg-3.jpg" srcset="/img/loading.gif" lazyload> 图3 共阴极数码管显示字段[&#x2F;caption] 上图中的0,1我们可以理解为低电平和高电平。在数字逻辑电路中，低电平表示0，高电平表示1。一般规定低电平为0<del>0.25V，高电平为3.5</del>5V。电源的电动势形成了电压，继而产生了电场力，在电场力的作用下，导体的的自由电荷有规则的定向移动形成电流。显而易见我们通过操作高低电平从而控制单个二极管的亮灭。</p>
+<p>以图中的共阴极8段数码管显示数字5为例，当我们显示数字5时，我们需要a,c,d,f,g段点亮，其他段保持熄灭状态。因为是共阴极数码管</p>
+<p>所以我们只需要给需要点亮的这5个数码管的阳极高电平（即 1 ）即可。所以当显示5时，二进制码为1101101，换成16进制就是0x6d。 [caption id&#x3D;”attachment_640” align&#x3D;”aligncenter” width&#x3D;”546”]<img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/2019/04/1555312333-6d.png" srcset="/img/loading.gif" lazyload> 图4 进制转换图[&#x2F;caption] 同理我们可以操作单个数码管显示不同的数字，以及字母（A-F）。 如果我们操作共阳极数码管显示5该如何操作呢？不难发现，共阳极数码管显示数字5也需要a,c,d,f,g这5个二极管点亮，其他二极管保持熄灭状态。因为其为共阳极数码管，从本文的图2中可以看到公共端为二极管的正端，所以只需要给这5个二极管的负端给低电平（即 0）即可。所以，当显示5时，二进制码为：10010010，换成16进制就是0x92，你可能会好奇为什么你写出来的是：0010010，转换16进制是0x12？因为你少算了一个dp位，也就是那个8段数码管的那个点。当我们使用共阴极数码管的时候，因为不需要那个点显示，所以该点都保持熄灭，所以为低电平，也就是为0。但是我们现在使用的是共阳极数码管，该点保持熄灭状态的时候应该为高电平，即1。所以我们在写二进制数的时候不要丢掉最高位的1。将0-F写入一个数组，这个数组就可以称为断码表。 在keil中操作数码管时，我们往往用断码表操作数码管显示0-F。下面为共阴极和共阳极数码管的断码表：</p>
+<blockquote>
+<p>unsigned char code GYang[]&#x3D;{0xc0，0xf9，0xa4，0xb0，0x99，0x92，0x82，0xf8，0x80，0x90，0x88，0x83，0xc6，0xa1，0x86，0x8e}&#x2F;&#x2F;共阳极数码管断码 unsigned char code Gyin[]&#x3D;{0x3f，0x06，0x5b，0x4f，0x66，0x6d，0x7d，0x07，0x7f，0x6f，0x77，0x7c，0x39，0x5e，0x79，0x71}&#x2F;&#x2F;共阴极数码管断码</p>
+</blockquote>
+<p>那么，我们如何操作多个数码管呢？ [caption id&#x3D;”attachment_641” align&#x3D;”aligncenter” width&#x3D;”540”]<img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/2019/04/1555314645-smg1.png" srcset="/img/loading.gif" lazyload> 图5 6个8段数码管[&#x2F;caption] 在图5中可以看到有 A-G和DP 以及从1-6共14个引脚。此处我们需要区别这些数码管时共阴极数码管还是共阳极数码管，如过上图为共阴极数码管，当我们操作其中一个数码管的时候需要给右侧1号引脚给低电平。同理操作哪个就给对应引脚低电平。如果操纵共阳极数码管，操作哪个数码管就给对应数码管引脚高电平。 那么？</p>
+<blockquote>
+<p>为什么共阴极数码管位选时为低电平有效？反而段选时是高电平有效呢？ 1，无论共阴极数码管还是共阳极数码管都是给阴极送低电平，阳极送高电平 2，位选的“选”，选通的是数码管的公共端，即：共阴极数码管位选选通的是所有数码管的某一个的公共阴极，共阳极数码管是选通某一个数码管的公共阳极。所以，共阴极数码管位选时低电平有效，而共阳极数码管选通时高电平有效。</p>
+</blockquote>
+<p>一般同时操作N个数码管数码管的时候，首先要进行位选，再进行段选（先选则哪一个数码管显示，再选择显示什么内容）。 当我们需要同时显示时，因为单次只能操作一个数码管，所以我们只能利用数码管的动态显示（数码管的动态扫描）：</p>
+<blockquote>
+<p>1，位选通一个数码管 2，进行段选显示内容 3，关闭此位选通的数码管，并位选通下一个要显示的数码管</p>
+</blockquote>
+<p>当我们重复上面3个步骤的时候，如果显示的间隔很小，就会造成“数码管一直显示”的错觉。也就达到了数码管一直显示的效果。   路漫漫其修远兮，吾将上下而求索。 歪克士 2019年4月15日</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/yingjian/" class="category-chain-item">硬件</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>【C51学习记录-1】共阴极，共阳极数码管的简单操作</div>
+      <div>https://www.wicos.me/yingjian/636/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Wicos</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2019年4月15日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/yingjian/647/" title="【ESP8266学习记录-1】MicroPython上手初体验-刷系统，文件上传，设置WIFI，DHT11温湿度模块的使用，IO的使用">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">【ESP8266学习记录-1】MicroPython上手初体验-刷系统，文件上传，设置WIFI，DHT11温湿度模块的使用，IO的使用</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/suixie/633/" title="不会开花的树">
+                        <span class="hidden-mobile">不会开花的树</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="twikoo"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#comments', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/twikoo/1.6.8/twikoo.all.min.js', function() {
+        var options = Object.assign(
+          {"envId":"https://comment.wicos.me","region":"ap-shanghai","path":"window.location.pathname"},
+          {
+            el: '#twikoo',
+            path: 'window.location.pathname',
+            onCommentLoaded: function() {
+              Fluid.utils.listenDOMLoaded(function() {
+                var imgSelector = '#twikoo .tk-content img:not(.tk-owo-emotion)';
+                Fluid.plugins.imageCaption(imgSelector);
+                Fluid.plugins.fancyBox(imgSelector);
+              });
+            }
+          }
+        )
+        twikoo.init(options)
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+      <a target="_blank" rel="noopener" href="https://github.com/pidbid"><span>Pidbid Github</span></a>
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

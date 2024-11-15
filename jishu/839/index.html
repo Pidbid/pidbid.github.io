@@ -1,0 +1,887 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/logo.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Wicos">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="人终其一生应该有所追求，但这种追求不应该仅仅局限在金钱上，它应该是一个特殊的，却普遍存在无人提及的东西。——Wicos 写在前面  一，创建Tensor的几种方法前提：import torch as t 1，Tensor(x,y)  a &#x3D; t.Tensor(2,3) #创建一个2行3列的张量  2，ones(x,y)  a &#x3D; t.ones(2,3) #创建一个2行3列的全">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【PyTorch笔记-01】初识PyTorch">
+<meta property="og:url" content="https://www.wicos.me/jishu/839/index.html">
+<meta property="og:site_name" content="Wicos&#39;s Blog.">
+<meta property="og:description" content="人终其一生应该有所追求，但这种追求不应该仅仅局限在金钱上，它应该是一个特殊的，却普遍存在无人提及的东西。——Wicos 写在前面  一，创建Tensor的几种方法前提：import torch as t 1，Tensor(x,y)  a &#x3D; t.Tensor(2,3) #创建一个2行3列的张量  2，ones(x,y)  a &#x3D; t.ones(2,3) #创建一个2行3列的全">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-01-18T06:51:57.000Z">
+<meta property="article:modified_time" content="2024-01-07T10:28:47.316Z">
+<meta property="article:author" content="Wicos">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>【PyTorch笔记-01】初识PyTorch - Wicos&#39;s Blog.</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"www.wicos.me","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Wicos&#39;s Blog.</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>主页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/suixie" target="_self">
+                <i class="iconfont icon-pen"></i>
+                <span>随写</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/jishu" target="_self">
+                <i class="iconfont icon-code"></i>
+                <span>技术</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/xiangmu" target="_self">
+                <i class="iconfont icon-note"></i>
+                <span>项目</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/gallary/" target="_self">
+                <i class="iconfont icon-image"></i>
+                <span>画廊</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="【PyTorch笔记-01】初识PyTorch"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2020-01-18 06:51" pubdate>
+          星期六, 一月 18日 2020, 6:51 早上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          <!-- compatible with older versions-->
+          1.7k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          <!-- compatible with older versions-->
+          15 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">【PyTorch笔记-01】初识PyTorch</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <blockquote>
+<p>人终其一生应该有所追求，但这种追求不应该仅仅局限在金钱上，它应该是一个特殊的，却普遍存在无人提及的东西。——Wicos 写在前面</p>
+</blockquote>
+<h3 id="一，创建Tensor的几种方法"><a href="#一，创建Tensor的几种方法" class="headerlink" title="一，创建Tensor的几种方法"></a>一，创建Tensor的几种方法</h3><p>前提：import torch as t 1，Tensor(x,y)</p>
+<blockquote>
+<p>a &#x3D; t.Tensor(2,3) #创建一个2行3列的张量</p>
+</blockquote>
+<p>2，ones(x,y)</p>
+<blockquote>
+<p>a &#x3D; t.ones(2,3) #创建一个2行3列的全1张量</p>
+</blockquote>
+<p>3，zeros(x,y)</p>
+<blockquote>
+<p>a &#x3D; t.zeros(2,3) #创建一个2行3列的全0张量</p>
+</blockquote>
+<p>4，eye(x,y)</p>
+<blockquote>
+<p>a &#x3D; t.eye(2,3) #创建一个2行3列对角线为1的张量，其中不要求行列数相同，1从左上角第一个数字开始对角扩张。如本例的输出a为： [[1.,0.,0.] [0.,1.,0.]]</p>
+</blockquote>
+<p>5，arange(x,y,z)</p>
+<blockquote>
+<p>a &#x3D; t.arange(1,6,1) #创建一个一维张量，从1开始到5结束，步长为1。 其创建的是torch.Tensor 如：&gt;&gt;&gt;type(a) -&gt;  &lt;class ‘torch.Tensor’&gt;</p>
+</blockquote>
+<p>6，linspace(x,y,z)</p>
+<blockquote>
+<p>a &#x3D; t.linspace(1,5,4) #创建一个一维张量，从1至5平均分成3份，共4个元素。 -&gt;tensor([1.0000, 2.3333, 3.6667, 5.0000])</p>
+</blockquote>
+<p>7，rand(x,y)</p>
+<blockquote>
+<p>a &#x3D; rand(2,5) #创建一个2行5列的均匀张量</p>
+</blockquote>
+<p>8，randn(x,y)</p>
+<blockquote>
+<p>a &#x3D; randn(2,5) #创建一个2行5列的平均张量</p>
+</blockquote>
+<p>9，normal(mean,std)&#x2F;uniform(from,to)</p>
+<blockquote>
+<p>#正态分布&#x2F;均匀分布</p>
+</blockquote>
+<p>10，ramdperm(x)</p>
+<blockquote>
+<p>a &#x3D; t.randperm(5) #创建一个一维的随机张量，内又5个元素。</p>
+</blockquote>
+<p>11，shape,size</p>
+<blockquote>
+<p>a.shape 与 a.zize() 得到的结果相同，注意shape后无括号，size后有括号。</p>
+</blockquote>
+<p>12，tolist()</p>
+<blockquote>
+<p>a.tolist() #tensor可以转换为list</p>
+</blockquote>
+<p>13，numel()&#x2F;nelement()</p>
+<blockquote>
+<p>a.numel与a.nelement()等效，都可以返回tensor元素总个数。</p>
+</blockquote>
+<p>14，创建Tensor时，可以在创建的时候指定数据类型dtype和存放device(cpu&#x2F;gpu)。 15，view(x,y)</p>
+<blockquote>
+<p>b &#x3D; a.view(2,3) #若a内原本元素有6个，可以重新转化为2行3列的张量。 注：view只会修改tensor的形状，不会修改数据，并且要保证前后元素相等。 当view内值有-1时，和shape,size()等效。即计算它的大小。</p>
+</blockquote>
+<p>16，squeeze()</p>
+<blockquote>
+<p>b &#x3D; a.squeeze() #把所有维度为1的压缩 b &#x3D; a.squeeze(0) #压缩0维的1</p>
+</blockquote>
+<p>17，unsqueeze(x)</p>
+<blockquote>
+<p>b &#x3D; a.unsqueeze(1) #在第1维上增加1</p>
+</blockquote>
+<p>18，resize_()</p>
+<blockquote>
+<p>a.resize_(2,3) #将原来的tensor转换为2行，3列的tensor，如果新生成的张量元素多于旧张量元素，则自动补充新内容，反之，保留原内容。</p>
+</blockquote>
+<h3 id="二，索引操作"><a href="#二，索引操作" class="headerlink" title="二，索引操作"></a>二，索引操作</h3><p>a &#x3D; t.randn(3,4) 19，a[x][y] &#x3D;&#x3D; a[x,y]</p>
+<blockquote>
+<p>a[2][3] #获取第2行第3列的元素 与 a[2,3]等效</p>
+</blockquote>
+<p>20，a[:x]</p>
+<blockquote>
+<p>a[:2] #获取前两行元素</p>
+</blockquote>
+<p>21，a[x:y,m:n]</p>
+<blockquote>
+<p>a[:2,0:1] #获取前两行，第一列 a[0:1,:2] #获取第0行，前两列 二者形状不同，数据也不同</p>
+</blockquote>
+<h3 id="三：逐元素操作"><a href="#三：逐元素操作" class="headerlink" title="三：逐元素操作"></a>三：逐元素操作</h3><p>函数</p>
+<p>功能</p>
+<p>abs&#x2F;sqrt&#x2F;div&#x2F;exp&#x2F;fmod&#x2F;log&#x2F;pow..</p>
+<p>绝对值&#x2F;平方根&#x2F;除法&#x2F;指数&#x2F;求余&#x2F;求幂..</p>
+<p>cos&#x2F;sin&#x2F;asin&#x2F;atan2&#x2F;cosh..</p>
+<p>相关三角函数</p>
+<p>ceil&#x2F;round&#x2F;floor&#x2F;trunc</p>
+<p>上取整&#x2F;四舍五入&#x2F;下取整&#x2F;只保留整数部分</p>
+<p>clamp(input, min, max)</p>
+<p>超过min和max部分截断</p>
+<p>sigmod&#x2F;tanh..</p>
+<p>激活函数</p>
+<p>部分可以进行运算符直接操作，如</p>
+<blockquote>
+<p>a &#x3D; t.arange(0,6,1).view(2,3) b &#x3D; t.pow(a,2) -&gt; [[0,1,4] [9,16,25]] 与a**2等效</p>
+</blockquote>
+<h3 id="四，归并"><a href="#四，归并" class="headerlink" title="四，归并"></a>四，归并</h3><p>函数</p>
+<p>功能</p>
+<p>mean&#x2F;sum&#x2F;median&#x2F;mode</p>
+<p>均值&#x2F;和&#x2F;中位数&#x2F;众数</p>
+<p>norm&#x2F;dist</p>
+<p>范数&#x2F;距离</p>
+<p>std&#x2F;var</p>
+<p>标准差&#x2F;方差</p>
+<p>cumsum&#x2F;cumprod</p>
+<p>累加&#x2F;累乘</p>
+<p>归并操作中大部分都有dim参数，决定在那个维度上执行操作。 假设输入的形状是(m, n, k)</p>
+<ul>
+<li>如果指定dim&#x3D;0，输出的形状就是(1, n, k)或者(n, k)</li>
+<li>如果指定dim&#x3D;1，输出的形状就是(m, 1, k)或者(m, k)</li>
+<li>如果指定dim&#x3D;2，输出的形状就是(m, n, 1)或者(m, n)</li>
+</ul>
+<p>size中是否有”1”，取决于参数<code>keepdim</code>，<code>keepdim=True</code>会保留维度<code>1</code>。 注意，以上只是经验总结，并非所有函数都符合这种形状变化方式，如<code>cumsum</code>。</p>
+<blockquote>
+<p>a &#x3D; t.arange(0,6,1).view(2,3)</p>
+</blockquote>
+<h3 id="五，比较"><a href="#五，比较" class="headerlink" title="五，比较"></a>五，比较</h3><p>函数</p>
+<p>功能</p>
+<p>gt&#x2F;lt&#x2F;ge&#x2F;le&#x2F;eq&#x2F;ne</p>
+<p>大于&#x2F;小于&#x2F;大于等于&#x2F;小于等于&#x2F;等于&#x2F;不等</p>
+<p>topk</p>
+<p>最大的k个数</p>
+<p>sort</p>
+<p>排序</p>
+<p>max&#x2F;min</p>
+<p>比较两个tensor最大最小值</p>
+<p>表中第一行的比较操作已经实现了运算符重载，因此可以使用<code>a&gt;=b</code>、<code>a&gt;b</code>、<code>a!=b</code>、<code>a==b</code>，其返回结果是一个<code>ByteTensor</code>，可用来选取元素。max&#x2F;min这两个操作比较特殊，以max来说，它有以下三种使用情况：</p>
+<ul>
+<li>t.max(tensor)：返回tensor中最大的一个数</li>
+<li>t.max(tensor,dim)：指定维上最大的数，返回tensor和下标</li>
+<li>t.max(tensor1, tensor2): 比较两个tensor相比较大的元素。</li>
+</ul>
+<h3 id="六，线性代数"><a href="#六，线性代数" class="headerlink" title="六，线性代数"></a>六，线性代数</h3><p>函数</p>
+<p>功能</p>
+<p>trace</p>
+<p>对角线元素之和(矩阵的迹)</p>
+<p>diag</p>
+<p>对角线元素</p>
+<p>triu&#x2F;tril</p>
+<p>矩阵的上三角&#x2F;下三角，可指定偏移量</p>
+<p>mm&#x2F;bmm</p>
+<p>矩阵乘法，batch的矩阵乘法</p>
+<p>addmm&#x2F;addbmm&#x2F;addmv&#x2F;addr&#x2F;badbmm..</p>
+<p>矩阵运算</p>
+<p>t</p>
+<p>转置</p>
+<p>dot&#x2F;cross</p>
+<p>内积&#x2F;外积</p>
+<p>inverse</p>
+<p>求逆矩阵</p>
+<p>svd</p>
+<p>奇异值分解</p>
+<p>注：矩阵转置后存储空间不连续，因此要使用<code>.contiguous</code>方法将其转为连续。</p>
+<h3 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h3><p>一，对tensor “维”的理解 在pytorch中，多种操作都涉及到“维”（dimension），如</p>
+<blockquote>
+<p>import torch as t a &#x3D; t.arange(0,8,1).view(2,2,2) a.dim() -&gt;3 #表示张量a有三个维度，分别是0，1，2 a.sum() #默认操作作用在所有元素上 -&gt; tensor(28) a.sum(dim &#x3D; 0) -&gt;trnsor([[4,6], [8,10]]) a.sum(dim &#x3D; 1) -&gt;tensor([[2,4], [10,12]]) a.sum(dim &#x3D; 2) -&gt;tensor([1,5], [9,13])</p>
+</blockquote>
+<p>通过对比可以看出同一个sum操作在dim不同的情况下得到的结果是不同的，因为此操作作用在不同的“维”。 当输出格式维张量时不方便看出，经过简单的tolist操作便可以更直观的理解</p>
+<blockquote>
+<p>b &#x3D; a.tolist() print(b) -&gt; [[[0,1],[2,3]],[[4,5],[6,7]]]</p>
+<ul>
+<li>当dim &#x3D; 0时，可以理解为操作[[A],[B]]，A与B对应操作，得到的结果时[[4,6],[8,10]]。</li>
+<li>当dim &#x3D; 1时，可以理解为[[[A],[B]],[[C],[D]]]，A，B对应操作后再对C，D对应操作，得到[[2,4],[10,12]]。</li>
+<li>当dim &#x3D; 2时，可以理解为[[[A],[B]],[[C],[D]]]，逐个对A，B，C，D内两元素对应操作，得到[[1,5],[9,3]]。</li>
+</ul>
+<p>为了进一步加深理解，a时一个张量，其为： a &#x3D; tensor([[[0, 1], [2, 3]], [[4, 5], [6, 7]]]) b &#x3D; [[[0, 1], [2, 3]], [[4, 5], [6, 7]]]</p>
+<ul>
+<li>操作a内元素时，a[0,0,1] 为 tensor(1)</li>
+<li>操作b内元素时，b[0][0][1]为1</li>
+</ul>
+</blockquote>
+<p>当tensor和list对比操作时，更容易理解tensor中的维这个概念。 ——Wicos 2020.1.19</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/jishu/" class="category-chain-item">技术</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>【PyTorch笔记-01】初识PyTorch</div>
+      <div>https://www.wicos.me/jishu/839/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Wicos</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2020年1月18日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/jishu/842/" title="Frp内网穿透之Nginx反代隐藏端口踩坑">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Frp内网穿透之Nginx反代隐藏端口踩坑</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/jishu/832/" title="W-Download 一个简单的远程下载工具">
+                        <span class="hidden-mobile">W-Download 一个简单的远程下载工具</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="twikoo"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#comments', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/twikoo/1.6.8/twikoo.all.min.js', function() {
+        var options = Object.assign(
+          {"envId":"https://comment.wicos.me","region":"ap-shanghai","path":"window.location.pathname"},
+          {
+            el: '#twikoo',
+            path: 'window.location.pathname',
+            onCommentLoaded: function() {
+              Fluid.utils.listenDOMLoaded(function() {
+                var imgSelector = '#twikoo .tk-content img:not(.tk-owo-emotion)';
+                Fluid.plugins.imageCaption(imgSelector);
+                Fluid.plugins.fancyBox(imgSelector);
+              });
+            }
+          }
+        )
+        twikoo.init(options)
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+      <a target="_blank" rel="noopener" href="https://github.com/pidbid"><span>Pidbid Github</span></a>
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

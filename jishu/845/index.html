@@ -1,0 +1,760 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/logo.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Wicos">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="1，本活动发起者为：TonyHe(https:&#x2F;&#x2F;www.ouorz.com)，在其博客https:&#x2F;&#x2F;www.ouorz.com&#x2F;594详细说明了“无限红包”的领取和操作步骤。该红包依托支付宝红包功能，获取红包的口令需要通过四步操作来完成。 2，本文主要用Python语言+在线工具来解决问题   上图为红包的参与须知，明确了参与者和一些参与者需要的技能。那么我们就开始吧~ 我们点击红包入口链">
+<meta property="og:type" content="article">
+<meta property="og:title" content="新年“无限红包”解密过程">
+<meta property="og:url" content="https://www.wicos.me/jishu/845/index.html">
+<meta property="og:site_name" content="Wicos&#39;s Blog.">
+<meta property="og:description" content="1，本活动发起者为：TonyHe(https:&#x2F;&#x2F;www.ouorz.com)，在其博客https:&#x2F;&#x2F;www.ouorz.com&#x2F;594详细说明了“无限红包”的领取和操作步骤。该红包依托支付宝红包功能，获取红包的口令需要通过四步操作来完成。 2，本文主要用Python语言+在线工具来解决问题   上图为红包的参与须知，明确了参与者和一些参与者需要的技能。那么我们就开始吧~ 我们点击红包入口链">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/2020/01/1579872915-red.jpg">
+<meta property="article:published_time" content="2020-01-25T05:44:35.000Z">
+<meta property="article:modified_time" content="2024-01-07T10:01:04.281Z">
+<meta property="article:author" content="Wicos">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/2020/01/1579872915-red.jpg">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>新年“无限红包”解密过程 - Wicos&#39;s Blog.</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"www.wicos.me","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Wicos&#39;s Blog.</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>主页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/suixie" target="_self">
+                <i class="iconfont icon-pen"></i>
+                <span>随写</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/jishu" target="_self">
+                <i class="iconfont icon-code"></i>
+                <span>技术</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/xiangmu" target="_self">
+                <i class="iconfont icon-note"></i>
+                <span>项目</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/gallary/" target="_self">
+                <i class="iconfont icon-image"></i>
+                <span>画廊</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/2020/01/1579872915-red.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="新年“无限红包”解密过程"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2020-01-25 05:44" pubdate>
+          星期六, 一月 25日 2020, 5:44 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          <!-- compatible with older versions-->
+          1.4k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          <!-- compatible with older versions-->
+          12 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">新年“无限红包”解密过程</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p><img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/2020/01/1579872915-red.jpg" srcset="/img/loading.gif" lazyload></p>
+<blockquote>
+<p>1，本活动发起者为：TonyHe(<a target="_blank" rel="noopener" href="https://www.ouorz.com/">https://www.ouorz.com</a>)，在其博客<a target="_blank" rel="noopener" href="https://www.ouorz.com/594">https://www.ouorz.com/594</a>详细说明了“无限红包”的领取和操作步骤。该红包依托支付宝红包功能，获取红包的口令需要通过四步操作来完成。 2，本文主要用Python语言+在线工具来解决问题</p>
+</blockquote>
+<p><img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/2020/01/1579922343-en_01.png" srcset="/img/loading.gif" lazyload alt="红包参与须知"> 上图为红包的参与须知，明确了参与者和一些参与者需要的技能。那么我们就开始吧~ 我们点击红包入口链接，可以看到返回的时一段Json数据 <img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/2020/01/1579922654-en02.png" srcset="/img/loading.gif" lazyload> 其中step字段表示此红包口令获取的阶段，piece字段表示红包口令的一部分。本页返回的Json数据似乎并没有更多的信息，那么我们就要进一步挖掘背后的信息。一个网页除了我们直观看到的内容外，从服务器还会返回Response Headers 这部分信息，普遍的查看方法是在浏览器按F12后点击该Json文件查看，结果如下： <img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/2020/01/1579923026-en03.png" srcset="/img/loading.gif" lazyload> 获取线索1的代码：</p>
+<blockquote>
+<p>import requests as rq rec &#x3D; rq.get(‘<a target="_blank" rel="noopener" href="https://www.ouorz.com/envelope/red.json">https://www.ouorz.com/envelope/red.json</a>‘) respHeaders &#x3D; rec.headers newYear &#x3D; respHeaders[‘Happy-2020-New-Year’]</p>
+</blockquote>
+<p>图中红框内返回字段明显是下一部分红包口令的线索。乍一看这是一连串二进制代码，每小段二进制代码间使用“_”分割开。我在获取第二步明确的线索时首先想到的是将这一段先转换成十进制。 获取线索2的代码(1)：</p>
+<blockquote>
+<p>newYear_s &#x3D; newYear.split(‘_‘) intTen &#x3D; [] i &#x3D; 0 for i in range(len(newYears_s)):</p>
+<p>a &#x3D; int(str(newYears_s[i]),2)</p>
+<p>intTen.append(a)</p>
+<p>#返回：[117, 101, 101, 46, 109, 101, 47, 99, 82, 99, 85, 119]，简单的观察一下，没发现什么有用的线索。</p>
+</blockquote>
+<p>由于我对十进制的数字很敏感，发现这一串数字中的46对应的ASCII码是“.”，索性将所有数字都转换一下。 获取线索2的代码(2)：</p>
+<blockquote>
+<p>xianSuo &#x3D; ‘’ for i in range(len(intTen)):</p>
+<p>xianSuo +&#x3D; chr(str(intTen[i]))</p>
+<p>print(xianSuo) #返回：uee.me&#x2F;cRcUw 这是一段短网址，还原网址后是：<a target="_blank" rel="noopener" href="https://www.ouorz.com/envelope/86d507bae612a1abf99d1b31cf1c65b2.json">https://www.ouorz.com/envelope/86d507bae612a1abf99d1b31cf1c65b2.json</a></p>
+</blockquote>
+<p>访问网址可以得到一段json内容，如下图： <img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/2020/01/1579926507-en04-960x277.png" srcset="/img/loading.gif" lazyload> 图中口令的第二部分是”新春”，线索是一段base64的字符串，第一反应是将其进行解码： 线索3的获取代码(1):</p>
+<blockquote>
+<p>import base64 as b6 recBase &#x3D; rq.get(‘<a target="_blank" rel="noopener" href="https://www.ouorz.com/envelope/86d507bae612a1abf99d1b31cf1c65b2.json">https://www.ouorz.com/envelope/86d507bae612a1abf99d1b31cf1c65b2.json</a>‘) recBase_z &#x3D; recBase.json() recBasejson &#x3D; recBase_z[‘base64’] base64De &#x3D; b6.b64decode(recBasejson) print(base64De) #从解码的数据中可以观察出该图片文件为png类型图片</p>
+</blockquote>
+<p>在浏览器内打开base64图片，步骤为：</p>
+<blockquote>
+<p>在浏览器地址栏输入:data:image&#x2F;png;base64,后面加上 base64未解码的内容</p>
+</blockquote>
+<p>打开后显示为下面这张图片： <img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/2020/01/1579927474-%E4%B8%8B%E8%BD%BD.png" srcset="/img/loading.gif" lazyload> 图片中有一个网址和一个备注，访问网址后发现无法访问，再结合下面的TXT提示首先进行尝试： 获取线索3的代码(2)：</p>
+<blockquote>
+<p>1，首先根据这个图片提示，我把图片下载后缀名改为txt，打开后是乱码，遂本次尝试失败。 2，将下载的png图片后缀改为zip压缩文件，打开失败。 3，由于直接访问发现无法打开网页，也就是该域名没有解析到对应的IP，更明确的说就是该二级域名没有绑定A记录或者CNAME记录。通过先前步骤可以得知，我们获取的内容是“字符串网址”。所以可以尝试查看该域名的txt记录，也刚好符合下面提示的内容。 nslookup -q&#x3D;txt tony.ouorz.com <img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/2020/01/1579928536-en05-960x143.png" srcset="/img/loading.gif" lazyload></p>
+</blockquote>
+<p>从上图得到的piece字段内容是X，并且再后面又两个链接，第一个链接访问为博主和我们开的一个玩笑 <img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/2020/01/1579928895-en07-960x160.png" srcset="/img/loading.gif" lazyload> 我这么有骨气的人怎么可能发送这些内容呢？（我怎么好意思要人家的红包还向人家问呢？），我们接着打开下面提示的网址，是一个火狐的文件分享网页，如下图 <img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/2020/01/1579929102-en08.png" srcset="/img/loading.gif" lazyload> 把文件下载之后是一个MP3文件，打开听之后是春节序曲，并没有什么异常。查看文件详情如下 <img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/2020/01/1579929217-en09-454x640.png" srcset="/img/loading.gif" lazyload> 从文件的备注可以得到以下信息：</p>
+<ul>
+<li><p>该音频文件来自网易云音乐</p>
+</li>
+<li><p>备注的163key可能是修改过的</p>
+</li>
+</ul>
+<p>我特地再网易云音乐下载相同的歌曲对比查看不同的163key，如下图 <img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/2020/01/1579929754-en10-905x640.png" srcset="/img/loading.gif" lazyload> 明显看出两个文件的key是不同的，所以从key下手。简单的了解过后得知，163key采用的是AES加密，使用aes-128-ecb 算法加密的，密码是 #14ljk_!\]&amp;0U&lt;’(。遂进行解密，解密过程为：</p>
+<ul>
+<li>将原密文通过base64解吗为HEX格式</li>
+<li>将HEX内容通过AES配合密码解密为初始内容</li>
+</ul>
+<p><img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/2020/01/1579930013-en11-960x477.png" srcset="/img/loading.gif" lazyload> <img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/2020/01/1579930031-en12-960x458.png" srcset="/img/loading.gif" lazyload> 我们将得到的内容格式化一下，可以得到如下图片 <img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/2020/01/1579930117-en13-960x587.png" srcset="/img/loading.gif" lazyload> 从格式化输出的内容来看，并没有得到有效的内容，那么这个线索并非为“通过修改163Key来达到储存线索”的目的。 再返回从音频文件入手，在Au内对比两文件的谱型如下 <img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/2020/01/1579930566-en14-960x303.png" srcset="/img/loading.gif" lazyload> 对比得知两文件似乎在谱型上并没有多大的差别，但是文件大小的确不同，所以文件一定是不同的（此处未验证MD5，因为个人认为没有必要）。后依次查看线索文件的频谱，发现差别就在这里！ <img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/2020/01/1579930814-en15-960x599.png" srcset="/img/loading.gif" lazyload> 至此所有的过程到此结束，所有的字段拼接完成是： 2020新春真快乐 开开心心的去领红包啦~ 写在后面： 本文为新年第一篇文章，写的很仓促，祝贺大家新年快乐，阖家幸福。也很感谢TonyHe的红包~ ——Wicos 2020.1.25</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/jishu/" class="category-chain-item">技术</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>新年“无限红包”解密过程</div>
+      <div>https://www.wicos.me/jishu/845/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Wicos</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2020年1月25日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/yingjian/868/" title="【Esp8266学习记录-8】基于Micro python对ESP8266一键配网">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">【Esp8266学习记录-8】基于Micro python对ESP8266一键配网</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/jishu/842/" title="Frp内网穿透之Nginx反代隐藏端口踩坑">
+                        <span class="hidden-mobile">Frp内网穿透之Nginx反代隐藏端口踩坑</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="twikoo"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#comments', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/twikoo/1.6.8/twikoo.all.min.js', function() {
+        var options = Object.assign(
+          {"envId":"https://comment.wicos.me","region":"ap-shanghai","path":"window.location.pathname"},
+          {
+            el: '#twikoo',
+            path: 'window.location.pathname',
+            onCommentLoaded: function() {
+              Fluid.utils.listenDOMLoaded(function() {
+                var imgSelector = '#twikoo .tk-content img:not(.tk-owo-emotion)';
+                Fluid.plugins.imageCaption(imgSelector);
+                Fluid.plugins.fancyBox(imgSelector);
+              });
+            }
+          }
+        )
+        twikoo.init(options)
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+      <a target="_blank" rel="noopener" href="https://github.com/pidbid"><span>Pidbid Github</span></a>
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

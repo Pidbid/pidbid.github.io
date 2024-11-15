@@ -1,0 +1,719 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/logo.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Wicos">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="原理：使用Magisk(topjohnwu&#x2F;Magisk: The Magic Mask for Android (github.com))对线刷包的boot.img进行修补，达到获取Root的权限。Ps：理论上对所有的小米机型都适用，但是我本人只对我所使用的Redmi K30Pro 手机试过，刷机请自行测试并承担风险！刷机可能会清楚手机数据，因此刷机有风险，ROOT需谨慎！ 前期准备">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【MIUI Root】红米K30Pro MIUI 12.5.3 增强版Root教程 保姆级教程">
+<meta property="og:url" content="https://www.wicos.me/jishu/1040/index.html">
+<meta property="og:site_name" content="Wicos&#39;s Blog.">
+<meta property="og:description" content="原理：使用Magisk(topjohnwu&#x2F;Magisk: The Magic Mask for Android (github.com))对线刷包的boot.img进行修补，达到获取Root的权限。Ps：理论上对所有的小米机型都适用，但是我本人只对我所使用的Redmi K30Pro 手机试过，刷机请自行测试并承担风险！刷机可能会清楚手机数据，因此刷机有风险，ROOT需谨慎！ 前期准备">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/2021/08/1629032586-01.jpg">
+<meta property="article:published_time" content="2021-08-15T14:24:33.000Z">
+<meta property="article:modified_time" content="2024-01-07T10:23:34.209Z">
+<meta property="article:author" content="Wicos">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/2021/08/1629032586-01.jpg">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>【MIUI Root】红米K30Pro MIUI 12.5.3 增强版Root教程 保姆级教程 - Wicos&#39;s Blog.</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"www.wicos.me","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Wicos&#39;s Blog.</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>主页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/suixie" target="_self">
+                <i class="iconfont icon-pen"></i>
+                <span>随写</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/jishu" target="_self">
+                <i class="iconfont icon-code"></i>
+                <span>技术</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/xiangmu" target="_self">
+                <i class="iconfont icon-note"></i>
+                <span>项目</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/gallary/" target="_self">
+                <i class="iconfont icon-image"></i>
+                <span>画廊</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/2021/08/1629032586-01.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="【MIUI Root】红米K30Pro MIUI 12.5.3 增强版Root教程 保姆级教程"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2021-08-15 14:24" pubdate>
+          星期日, 八月 15日 2021, 2:24 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          <!-- compatible with older versions-->
+          1.2k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          <!-- compatible with older versions-->
+          11 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">【MIUI Root】红米K30Pro MIUI 12.5.3 增强版Root教程 保姆级教程</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p><img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/2021/08/1629032586-01.jpg" srcset="/img/loading.gif" lazyload> 原理：使用Magisk(<a target="_blank" rel="noopener" href="https://github.com/topjohnwu/Magisk">topjohnwu&#x2F;Magisk: The Magic Mask for Android (github.com)</a>)对线刷包的boot.img进行修补，达到获取Root的权限。Ps：理论上对所有的小米机型都适用，但是我本人只对我所使用的Redmi K30Pro 手机试过，<strong>刷机请自行测试并承担风险！刷机可能会清楚手机数据，因此刷机有风险，ROOT需谨慎！</strong> 前期准备： <strong>1，小米&#x2F;红米手机解BL锁</strong>，详情请见<a target="_blank" rel="noopener" href="http://www.miui.com/unlock/index.html">申请解锁小米手机 (miui.com) </a> <strong>2，手机线刷驱动下载安装</strong>，访问<a target="_blank" rel="noopener" href="http://www.miui.com/shuaji-393.html">通过线刷升级 (miui.com)</a> <img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/2021/08/1629034037-02.png" srcset="/img/loading.gif" lazyload> 点击如图中“通用刷机工具下载”，下载解压后打开XiaoMiFlash.exe，打开后如下图： <img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/2021/08/1629034121-05.png" srcset="/img/loading.gif" lazyload> 首次打开会提示驱动安装，点击安装按钮即可进行安装，安装过后此工具关闭即可，手机Root不通过此工具，仅仅使用其安装所需驱动。 <strong>3，下载adb工具包以及配置系统环境变量</strong>，再此推荐谷歌下载的方式，地址为：<a target="_blank" rel="noopener" href="https://developer.android.google.cn/studio/releases/platform-tools?hl=zh-cn">SDK Platform Tools 版本说明    Android 开发者    Android Developers (google.cn)</a> 打开后为以下界面： <img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/2021/08/1629034355-03.png" srcset="/img/loading.gif" lazyload> 在此网页中点击下载windows所需的SDK Platform-Tools，如果不能直接下载请复制链接后于迅雷内下载，亲测迅雷可以直接下载，下载后将文件夹解压，作者放在了D盘内，接下来进行adb的环境变量配置。 打开计算机的“系统环境变量配置”，如下图 <img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/2021/08/1629034773-04.png" srcset="/img/loading.gif" lazyload> 点击图中所示的环境变量后如下图 <img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/2021/08/1629034903-05.png" srcset="/img/loading.gif" lazyload> 点击图中所示的Path后会弹出如下界面 <img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/2021/08/1629034814-06.png" srcset="/img/loading.gif" lazyload> 在此界面点击新建，将下载的adb压缩包路径保存进去即可，谷歌下载的abd压缩包文件名为platform-tools，切记只填写目录即可，不需要具体到adb.exe。 <strong>4，下载Magisk软件</strong>，Magisk为手机端软件，请访问：<a target="_blank" rel="noopener" href="https://github.com/topjohnwu/Magisk/releases/">Releases · topjohnwu&#x2F;Magisk (github.com)</a>点击下载最新版的文件即可，下载之后安装在手机内。 **5，下载与手机对应版本一致的刷机包，并提取boot.img ** 下载方式可以分为两种，下面将逐一介绍两种下载方式 <strong>5.1  下载方式一：</strong>在小米手机“设置”——“我的设备”——“MIUI版本”内点击右上角三个点，弹出如下界面 <img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/2021/08/1629035347-aaa-288x640.jpg" srcset="/img/loading.gif" lazyload> 再点击“下载最新完整包”，点击之后在手机的下载应用内复制下载链接，之后使用IDM或者其他的软件进行下载。 <strong>5.2 下载方式二：</strong>在<a target="_blank" rel="noopener" href="https://xiaomirom.com/">XiaomiROM.com - 小米 ROM 线刷包, 卡刷包的最新及历史版本下载</a> 网页内进行下载，请选择与你机型合适的线刷包！ 博主截至2021年8月15日，选择的是MIUI 12.5.3，也就是推送给Redmi K30Pro 的MIUI 12.5增强版。 通过以上两种方式下载的压缩文件打开后可以直接提取所需的boot.img，并不需要解密等操作，如下图 <img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/2021/08/1629035826-07.png" srcset="/img/loading.gif" lazyload> 复制好boot.img文件后，将其发送至手机端，也可以在手机端进行下载提取。 <strong>6，使用Magisk工具进行boot修补，</strong>打开Magisk选择“安装”，并选择“选择一个修补文件” <img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/2021/08/1629036026-Screenshot_2021-08-15-21-58-49-477_com.topjohnwu.magisk-288x640.jpg" srcset="/img/loading.gif" lazyload> 之后选择刚从线刷包内提取的boot.img文件，之后Magisk会开始修补boot，修补完boot之后会生成一个magisk_patched-XXXXX_XXXXX.img文件，将这个文件发送至电脑，后关闭Magisk，后续的刷入操作需要在电脑端进行。 <strong>7，电脑端在手机fastboot模式内进行修补后的boot文件刷入，</strong>手机在解锁过后，关机状态下按住音量减和开机按键进入fastboot模式，这时将手机连接至电脑，使用 打开电脑cmd终端或者PowerShell或者Terminal终端输入</p>
+<p> fastboot devices</p>
+<p>命令进行查看设备，如果此时没有设备显示，请重新安装手机线刷驱动（见上文），如果有设备显示，表示正常，输入以下命令开始boot的刷入</p>
+<p>fastboot flash boot C:\magisk_patched-XXXXX_XXXXX.img</p>
+<p>进行boot刷入，上述命令中后半段为经过修补的boot文件绝对路径！输入之后显示如下界面： <img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/2021/08/1629036903-10.png" srcset="/img/loading.gif" lazyload> 至此boot刷入过程结束，你已经获取了你手机的root权限了，可以在手机上为所欲为了。最后补上刷入root后在Magisk内刷入的“插件”。 <img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/2021/08/1629037115-bbb-288x640.jpg" srcset="/img/loading.gif" lazyload> <strong>7，总结，不喜欢可以跳过</strong> 刷机是每一个玩机爱好者绕不开的学习过程，从2017年开始制作刷机Rom至今日，一路走来心境也发生了变化，有时手机甚至懒得进行BL解锁，更别说获取Root或者刷Rec刷机了。可能会随着年龄的变化，折腾的心和所持有的热情会慢慢的衰退。最终追求稳定，因为稳定胜过一切。   ——Wicos 2021&#x2F;08&#x2F;15</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/jishu/" class="category-chain-item">技术</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>【MIUI Root】红米K30Pro MIUI 12.5.3 增强版Root教程 保姆级教程</div>
+      <div>https://www.wicos.me/jishu/1040/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Wicos</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2021年8月15日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/jishu/1062/" title="Windows11安装WSL-Ubuntu小记">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Windows11安装WSL-Ubuntu小记</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/suixie/991/" title="24岁的疯子">
+                        <span class="hidden-mobile">24岁的疯子</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="twikoo"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#comments', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/twikoo/1.6.8/twikoo.all.min.js', function() {
+        var options = Object.assign(
+          {"envId":"https://comment.wicos.me","region":"ap-shanghai","path":"window.location.pathname"},
+          {
+            el: '#twikoo',
+            path: 'window.location.pathname',
+            onCommentLoaded: function() {
+              Fluid.utils.listenDOMLoaded(function() {
+                var imgSelector = '#twikoo .tk-content img:not(.tk-owo-emotion)';
+                Fluid.plugins.imageCaption(imgSelector);
+                Fluid.plugins.fancyBox(imgSelector);
+              });
+            }
+          }
+        )
+        twikoo.init(options)
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+      <a target="_blank" rel="noopener" href="https://github.com/pidbid"><span>Pidbid Github</span></a>
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
