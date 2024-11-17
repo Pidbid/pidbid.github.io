@@ -16,25 +16,25 @@
   <meta name="author" content="Wicos">
   <meta name="keywords" content="">
   
-    <meta name="description" content="问题背景IMPORTANT：如果你的设备没有ROOT，下面的内容可以不用阅读最近在面试，面试中聊到APP爬虫相关的内容。其实如果把APP爬虫的内容说的再直白一点，就是APP的破解、攻防问题。当我们从爬虫本身出发，爬取数据就是抓APP向该服务器的HTTPS请求（此处HTTP请求不提）。涉及到HTTPS请求时，如果不配置证书，通过charles和fiddler的请求获取HTTP请求的content">
+    <meta name="description" content="本文背景前几个月，我将博客从云服务器迁移至个人服务器，使用frp穿透进行内网服务的部署。同时将博客从PHP的Wordpress切换为Hexo，并将原博客的图片资源部署至阿里云OSS。但由于个人服务器的运行条件有限，网络有时会断开，所以博客的运行并不稳定，有时会无法访问。 解决思路因为目前博客基于Hexo，那么就可以借用github的pages功能，将生成的静态文件部署在githgub仓库内。但gi">
 <meta property="og:type" content="article">
-<meta property="og:title" content="浅谈安卓14APP抓包证书配置">
-<meta property="og:url" content="https://www.wicos.me/jishu/1157/index.html">
+<meta property="og:title" content="hexo博客优化+部署">
+<meta property="og:url" content="https://www.wicos.me/jishu/1158/index.html">
 <meta property="og:site_name" content="Wicos&#39;s Blog.">
-<meta property="og:description" content="问题背景IMPORTANT：如果你的设备没有ROOT，下面的内容可以不用阅读最近在面试，面试中聊到APP爬虫相关的内容。其实如果把APP爬虫的内容说的再直白一点，就是APP的破解、攻防问题。当我们从爬虫本身出发，爬取数据就是抓APP向该服务器的HTTPS请求（此处HTTP请求不提）。涉及到HTTPS请求时，如果不配置证书，通过charles和fiddler的请求获取HTTP请求的content">
+<meta property="og:description" content="本文背景前几个月，我将博客从云服务器迁移至个人服务器，使用frp穿透进行内网服务的部署。同时将博客从PHP的Wordpress切换为Hexo，并将原博客的图片资源部署至阿里云OSS。但由于个人服务器的运行条件有限，网络有时会断开，所以博客的运行并不稳定，有时会无法访问。 解决思路因为目前博客基于Hexo，那么就可以借用github的pages功能，将生成的静态文件部署在githgub仓库内。但gi">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/upload/202409272040344.JPG">
-<meta property="article:published_time" content="2024-09-27T12:42:40.000Z">
-<meta property="article:modified_time" content="2024-09-27T13:53:23.414Z">
+<meta property="og:image" content="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/upload/202411171900064.JPG">
+<meta property="article:published_time" content="2024-11-17T18:52:02.000Z">
+<meta property="article:modified_time" content="2024-11-17T11:58:25.661Z">
 <meta property="article:author" content="Wicos">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/upload/202409272040344.JPG">
+<meta name="twitter:image" content="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/upload/202411171900064.JPG">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>浅谈安卓14APP抓包证书配置 - Wicos&#39;s Blog.</title>
+  <title>hexo博客优化+部署 - Wicos&#39;s Blog.</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -206,13 +206,13 @@
   
 
 <div id="banner" class="banner" parallax=true
-     style="background: url('https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/upload/202409272040344.JPG') no-repeat center center; background-size: cover;">
+     style="background: url('https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/upload/202411171900064.JPG') no-repeat center center; background-size: cover;">
   <div class="full-bg-img">
     <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="浅谈安卓14APP抓包证书配置"></span>
+            <span id="subtitle" data-typed-text="hexo博客优化+部署"></span>
           
         </div>
 
@@ -223,8 +223,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2024-09-27 12:42" pubdate>
-          星期五, 九月 27日 2024, 12:42 下午
+        <time datetime="2024-11-17 18:52" pubdate>
+          星期日, 十一月 17日 2024, 6:52 晚上
         </time>
       </span>
     
@@ -236,7 +236,7 @@
         <i class="iconfont icon-chart"></i>
         
           <!-- compatible with older versions-->
-          984 字
+          852 字
         
       </span>
     
@@ -248,7 +248,7 @@
         
         
           <!-- compatible with older versions-->
-          9 分钟
+          8 分钟
         
       </span>
     
@@ -285,34 +285,62 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">浅谈安卓14APP抓包证书配置</h1>
+            <h1 id="seo-header">hexo博客优化+部署</h1>
             
             
               <div class="markdown-body">
                 
-                <img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/upload/202409272040344.JPG" srcset="/img/loading.gif" lazyload style="height:100%;width:100%;" />
+                <h2 id="本文背景"><a href="#本文背景" class="headerlink" title="本文背景"></a>本文背景</h2><p>前几个月，我将博客从云服务器迁移至个人服务器，使用frp穿透进行内网服务的部署。同时将博客从PHP的Wordpress切换为Hexo，并将原博客的图片资源部署至阿里云OSS。但由于个人服务器的运行条件有限，网络有时会断开，所以博客的运行并不稳定，有时会无法访问。</p>
+<h2 id="解决思路"><a href="#解决思路" class="headerlink" title="解决思路"></a>解决思路</h2><p>因为目前博客基于Hexo，那么就可以借用github的pages功能，将生成的静态文件部署在githgub仓库内。但github有一个限制，私人仓库无法使用pages功能（免费版），所以就有以下解决方案。<br>首先创建两个仓库，仓库A存储博客源文件，权限设置为非公开。仓库B存储仓库A发布（build）的静态文件，同时将博客的域名CNAME到仓库的pages域名。<br>让我们再进一步去思考（偷懒）,如果可以每次写完博客之后，有一个“机器人”自动的帮我进行生成、部署任务那将是极好的。这时候就可以使用github的wordflow功能。该功能可以在我push仓库的时候触发，自动帮我生成静态文件，并将静态文件发布到公开的仓库B。</p>
+<h2 id="解决步骤"><a href="#解决步骤" class="headerlink" title="解决步骤"></a>解决步骤</h2><h3 id="仓库设置"><a href="#仓库设置" class="headerlink" title="仓库设置"></a>仓库设置</h3><p>既然我们有了新的解决思路，我们只需要创建两个仓库即可，假设现在我们创建了两个仓库分别为blog与[your github username].github.io（以下简称blog_publish仓库），其中blog是私人仓库，并不公开，另外的仓库设置为公开。  </p>
+<h3 id="仓库权限以及personal-token设置"><a href="#仓库权限以及personal-token设置" class="headerlink" title="仓库权限以及personal_token设置"></a>仓库权限以及personal_token设置</h3><p>首先要将你的blog_publish仓库设置为允许actions修改，Settings-&gt;Actions-&gt;General<br><img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/upload/202411171938707.png" srcset="/img/loading.gif" lazyload><br>设置完成之后需要获取个人的github的personal access token，进入你的github profile界面，点击右侧头像，选择Settings，再点击左侧的Developer Settings，之后点击Personal access tokens设置你的Tokens(classic)<br><img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/upload/202411171944417.png" srcset="/img/loading.gif" lazyload><br>接下来将你的access token设置再blog的Secrets and variables中Actions的Secret内添加PERSONAL_TOKEN。此步骤的目的是使blog的workflow具有将生成文件推送至新仓库的权限。<br><img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/upload/202411171947831.png" srcset="/img/loading.gif" lazyload>  </p>
+<h3 id="初始化blog仓库"><a href="#初始化blog仓库" class="headerlink" title="初始化blog仓库"></a>初始化blog仓库</h3><p>在本地使用git clone 将blog仓库克隆下来，并在此文件夹下使用npm安装hexo，此步骤可以参考<a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/docs/">hexo官方文档</a>，之后将你的博客文件复制到source&#x2F;_posts文件夹下。</p>
+<h3 id="为blog-仓库创建Actions脚本"><a href="#为blog-仓库创建Actions脚本" class="headerlink" title="为blog 仓库创建Actions脚本"></a>为blog 仓库创建Actions脚本</h3><p>在本地blog仓库文件夹下创建一个 <strong>.github</strong> 并在此文件夹下创建 <strong>workflows</strong> 文件夹，接着在 workflows 文件夹下创建builder.yml文件，同时复制以下代码至该文件。<br>&#96;<br>name: Deploy Hexo Blog</p>
+<p>on:<br>  push:<br>    branches:<br>      - main</p>
+<p>jobs:<br>  deploy:<br>    runs-on: ubuntu-latest</p>
+<pre><code class="hljs">steps:
+- name: Checkout source code
+  uses: actions/checkout@v4
 
-<h2 id="问题背景"><a href="#问题背景" class="headerlink" title="问题背景"></a>问题背景</h2><p><strong>IMPORTANT：如果你的设备没有ROOT，下面的内容可以不用阅读</strong><br>最近在面试，面试中聊到APP爬虫相关的内容。其实如果把APP爬虫的内容说的再直白一点，就是APP的破解、攻防问题。当我们从爬虫本身出发，爬取数据就是抓APP向该服务器的HTTPS请求（此处HTTP请求不提）。涉及到HTTPS请求时，如果不配置证书，通过charles和fiddler的请求获取HTTP请求的content都是经过加密的。因此，如果我们要使用“中间人攻击”来劫持HTTPS，从而解密内容，就必须再设备上（安卓或ios）安装对应的证书。<br>但是，从Android7之后，无法通过直接安装证书的方式安装自己的证书，即使安装上之后软件也无法通过“用户”的证书进行访问，因此我们要将charles和fiddler的证书安装到“系统”中。<br>那么我们就可以把问题简化为<strong>如何将证书安装在系统中或通过其他方式被系统信任</strong>，既然问题简化了，在这里也总结两个方法。</p>
-<h2 id="解决过程"><a href="#解决过程" class="headerlink" title="解决过程"></a>解决过程</h2><h3 id="1-方法一：将证书文件移动至系统信任的证书目录"><a href="#1-方法一：将证书文件移动至系统信任的证书目录" class="headerlink" title="1 方法一：将证书文件移动至系统信任的证书目录"></a>1 方法一：将证书文件移动至系统信任的证书目录</h3><h4 id="1-1-安卓版本小于7"><a href="#1-1-安卓版本小于7" class="headerlink" title="1.1 安卓版本小于7"></a>1.1 安卓版本小于7</h4><p>首先，无论是fiddler还是charles，他们的ssl证书都是pem格式，可以通过如下命令首先查看证书的散列值  </p>
-<blockquote>
-<p>openssl x509 -subject_hash_old -in  </p>
-</blockquote>
-<p>执行后输出为下图：<br><img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/upload/202409272123788.png" srcset="/img/loading.gif" lazyload><br>接着，我们将要移动至安卓手机的证书文件命名为 a14ca8d8.0 ，重命名之后，我们使用adb命令将文件push到安卓设备的  </p>
-<blockquote>
-<p>&#x2F;system&#x2F;etc&#x2F;security&#x2F;cacerts  </p>
-</blockquote>
-<p>目录内，如果遇到提示权限不足的情况，在adb的shell内执行  </p>
-<blockquote>
-<p>mount -o rw,remount &#x2F;system<br>将.0证书文件移动至cacerts目录后，使用如下命令为证书赋予权限<br>chmod 644 &#x2F;system&#x2F;etc&#x2F;security&#x2F;cacerts&#x2F;a14ca8d8.0<br>之后重启手机即可愉快的抓包拉~</p>
-</blockquote>
-<h4 id="1-2-安卓版本大于10小于14"><a href="#1-2-安卓版本大于10小于14" class="headerlink" title="1.2 安卓版本大于10小于14"></a>1.2 安卓版本大于10小于14</h4><p>其实从安卓10开始，&#x2F;system就是不可读写的，即使你拥有root权限，那么你就需要在手机上刷入magisk之后再刷入<a target="_blank" rel="noopener" href="https://github.com/HuskyDG/magic_overlayfs">magic_overlayfs</a>该模块将多个不同的底层挂载点合并为一个，从而形成包含来自所有来源的底层文件和子目录的单一目录结构。刷入该模块之后，就可以轻松的通过1.1 的方法将.0证书文件移动至系统的cacerts目录内。</p>
-<h4 id="1-3-安卓版本大于等于14"><a href="#1-3-安卓版本大于等于14" class="headerlink" title="1.3 安卓版本大于等于14"></a>1.3 安卓版本大于等于14</h4><p>如果你的安卓版本大于14，比如小米的澎湃os，那么你就会面临新的问题。因为自从安卓14开始，将系统根CA证书，从系统目录&#x2F;system&#x2F;etc&#x2F;security&#x2F;cacerts迁移到com.android.conscrypt.apex中，apex的挂载后的目录&#x2F;apex&#x2F;com.android.conscrypt&#x2F;cacerts。在原来基于magisk模块overlay &#x2F;system&#x2F;etc&#x2F;security&#x2F;cacerts方案的基础上，可以在magisk模块的post-fs-data.sh增加一句bind mount即可解决问题。亲测使用HttpCanary在Android 14可以抓仅信任系统根CA证书的应用的包。命令如下：  </p>
-<blockquote>
-<p>mount -o bind &#x2F;system&#x2F;etc&#x2F;security&#x2F;cacerts &#x2F;apex&#x2F;com.android.conscrypt&#x2F;cacerts  </p>
-</blockquote>
-<p>当然也可以直接在模块中判断是否存在apex目录，如果存在则直接overlay apex目录，否则overlay system目录。<br><img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/upload/202409272146990.png" srcset="/img/loading.gif" lazyload><br>我们通过wuxianlin大佬的方法可以搞定安卓14的证书问题。</p>
-<h3 id="2-方法二：将用户自行安装的证书设置为可信任的"><a href="#2-方法二：将用户自行安装的证书设置为可信任的" class="headerlink" title="2 方法二：将用户自行安装的证书设置为可信任的"></a>2 方法二：将用户自行安装的证书设置为可信任的</h3><p>如果你嫌上述方法都很复杂，那么还有一个办法是“将用户的证书设置为系统可信任的证书”，通过magisk的<a target="_blank" rel="noopener" href="https://github.com/NVISOsecurity/MagiskTrustUserCerts">MagiskTrustUserCerts</a>模块，安装该模块之后就不用来回复制证书文件了，直接将fiddler或charles证书安装即可。这个方法未测试，据说是可行的。<br><img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/upload/202409272153077.png" srcset="/img/loading.gif" lazyload></p>
-<p>2024-09-27 wicos</p>
+- name: Setup Node.js
+  uses: actions/setup-node@v4
+  with:
+    node-version: &#39;20&#39;  # 使用 Node.js 20 版本
+
+- name: Cache Node.js modules
+  id: cache-node-modules
+  uses: actions/cache@v4
+  with:
+    path: node_modules
+    key: $&#123;&#123; runner.os &#125;&#125;-node-$&#123;&#123; hashFiles('**/package-lock.json') &#125;&#125;
+    restore-keys: |
+      $&#123;&#123; runner.os &#125;&#125;-node-
+
+- name: Install dependencies
+  if: steps.cache-node-modules.outputs.cache-hit != &#39;true&#39;
+  run: npm install
+
+- name: Generate static files
+  run: npm run build
+
+- name: Configure Git
+  run: |
+    git config --global user.name &quot;your github username&quot;
+    git config --global user.email &quot;your github email&quot;
+
+- name: Deploy to GitHub Pages
+  uses: peaceiris/actions-gh-pages@v4
+  with:
+    personal_token: $&#123;&#123; secrets.PERSONAL_TOKEN &#125;&#125;
+    publish_dir: ./public
+    external_repository: [your github username]/your github username.github.io  # 替换为你的 publish 仓库
+    publish_branch: main  # 或者你希望部署的分支
+    user_name: &#39;your github username&#39;
+    user_email: &#39;your github email&#39;
+</code></pre>
+<p>&#96;</p>
+<h3 id="向blog仓库添加文件"><a href="#向blog仓库添加文件" class="headerlink" title="向blog仓库添加文件"></a>向blog仓库添加文件</h3><p>在blog文件夹下，使用git对仓库推送（别忘记创建.gitignore忽略node_modules）<br><code>git add .   git commit -m &quot;first commit&quot;   git push origin main  </code><br>之后等待Actions执行即可……</p>
+<p>——wicos 2024&#x2F;11&#x2F;17</p>
 
                 
               </div>
@@ -351,8 +379,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>浅谈安卓14APP抓包证书配置</div>
-      <div>https://www.wicos.me/jishu/1157/</div>
+      <div>hexo博客优化+部署</div>
+      <div>https://www.wicos.me/jishu/1158/</div>
     </div>
     <div class="license-meta">
       
@@ -364,7 +392,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2024年9月27日</div>
+          <div>2024年11月17日</div>
         </div>
       
       
@@ -396,18 +424,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/jishu/1158/" title="hexo博客优化+部署">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">hexo博客优化+部署</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/jishu/1156/" title="一次惊心动魄的手机救砖记录-无限重启fastboot">
-                        <span class="hidden-mobile">一次惊心动魄的手机救砖记录-无限重启fastboot</span>
+                      <a href="/jishu/1157/" title="浅谈安卓14APP抓包证书配置">
+                        <span class="hidden-mobile">浅谈安卓14APP抓包证书配置</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
