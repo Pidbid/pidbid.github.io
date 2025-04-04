@@ -1,0 +1,893 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/logo.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Wicos">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="MCP技术概述MCP（Model Completion Protocol）是近年来在AI领域迅速发展的标准化协议，专门设计用于实现AI模型与应用程序之间的高效通信。截至2025年，这一协议已经成为大语言模型（LLM）生态系统中不可或缺的核心组件，解决了流式响应、实时交互、工具调用等场景中的众多技术挑战。  MCP协议的基础设计原则是：  流式传输优先：采用增量传输而非整体响应 协议一致性：保证不同">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AI中的MCP技术解析：stdio与SSE实现">
+<meta property="og:url" content="https://www.wicos.me/jishu/1160/index.html">
+<meta property="og:site_name" content="Wicos&#39;s Blog.">
+<meta property="og:description" content="MCP技术概述MCP（Model Completion Protocol）是近年来在AI领域迅速发展的标准化协议，专门设计用于实现AI模型与应用程序之间的高效通信。截至2025年，这一协议已经成为大语言模型（LLM）生态系统中不可或缺的核心组件，解决了流式响应、实时交互、工具调用等场景中的众多技术挑战。  MCP协议的基础设计原则是：  流式传输优先：采用增量传输而非整体响应 协议一致性：保证不同">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/upload/2024071601.jpg">
+<meta property="article:published_time" content="2025-04-04T10:30:00.000Z">
+<meta property="article:modified_time" content="2025-04-04T15:09:03.358Z">
+<meta property="article:author" content="Wicos">
+<meta property="article:tag" content="AI">
+<meta property="article:tag" content="MCP">
+<meta property="article:tag" content="技术">
+<meta property="article:tag" content="LLM">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/upload/2024071601.jpg">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>AI中的MCP技术解析：stdio与SSE实现 - Wicos&#39;s Blog.</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"www.wicos.me","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Wicos&#39;s Blog.</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>主页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/suixie" target="_self">
+                <i class="iconfont icon-pen"></i>
+                <span>随写</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/jishu" target="_self">
+                <i class="iconfont icon-code"></i>
+                <span>技术</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/xiangmu" target="_self">
+                <i class="iconfont icon-note"></i>
+                <span>项目</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/gallary/" target="_self">
+                <i class="iconfont icon-image"></i>
+                <span>画廊</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/upload/2024071601.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="AI中的MCP技术解析：stdio与SSE实现"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-04-04 10:30" pubdate>
+          星期五, 四月 4日 2025, 10:30 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          <!-- compatible with older versions-->
+          3.4k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          <!-- compatible with older versions-->
+          29 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">AI中的MCP技术解析：stdio与SSE实现</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="MCP技术概述"><a href="#MCP技术概述" class="headerlink" title="MCP技术概述"></a>MCP技术概述</h2><p>MCP（Model Completion Protocol）是近年来在AI领域迅速发展的标准化协议，专门设计用于实现AI模型与应用程序之间的高效通信。截至2025年，这一协议已经成为大语言模型（LLM）生态系统中不可或缺的核心组件，解决了流式响应、实时交互、工具调用等场景中的众多技术挑战。</p>
+<p><img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/upload/2024071601.jpg" srcset="/img/loading.gif" lazyload></p>
+<p>MCP协议的基础设计原则是：</p>
+<ol>
+<li><strong>流式传输优先</strong>：采用增量传输而非整体响应</li>
+<li><strong>协议一致性</strong>：保证不同模型实现间的互操作性</li>
+<li><strong>低延迟高效率</strong>：最小化传输开销和响应时间</li>
+<li><strong>可扩展性</strong>：支持未来新功能的无缝集成</li>
+</ol>
+<h2 id="MCP的通信模型"><a href="#MCP的通信模型" class="headerlink" title="MCP的通信模型"></a>MCP的通信模型</h2><p>MCP采用<strong>请求-响应流</strong>模式，其中每个请求可能触发多个响应片段：</p>
+<figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs gherkin">Client                    Server<br>  |<span class="hljs-string">                         </span>|<br>  |<span class="hljs-string">------ Request ---------&gt;</span>|<br>  |<span class="hljs-string">&lt;----- Response 1 -------</span>|<br>  |<span class="hljs-string">&lt;----- Response 2 -------</span>|<br>  |<span class="hljs-string">&lt;----- Response 3 -------</span>|<br>  |<span class="hljs-string">&lt;----- Response n -------</span>|<br>  |<span class="hljs-string">&lt;------ [EOS] -----------</span>|<br>  |<span class="hljs-string">                         </span>|<br></code></pre></td></tr></table></figure>
+
+<p>这种设计使AI模型能够在生成过程中持续向客户端推送内容，实现”思考即输出”的用户体验，而非等待完整计算后再返回结果。</p>
+<h2 id="MCP的核心实现技术"><a href="#MCP的核心实现技术" class="headerlink" title="MCP的核心实现技术"></a>MCP的核心实现技术</h2><p>MCP协议主要通过两种核心技术实现：标准输入输出（stdio）和服务器发送事件（SSE），它们分别适用于不同的部署环境和使用场景。</p>
+<h3 id="基于stdio的MCP实现原理"><a href="#基于stdio的MCP实现原理" class="headerlink" title="基于stdio的MCP实现原理"></a>基于stdio的MCP实现原理</h3><p>stdio（标准输入输出）是MCP协议在本地或容器化环境中的主要实现方式。在技术层面，其工作原理如下：</p>
+<ol>
+<li><strong>进程间通信机制</strong>：MCP利用操作系统提供的标准IO流（文件描述符0、1、2）在进程间传递数据</li>
+<li><strong>非缓冲模式</strong>：为确保实时性，stdio通常配置为非缓冲或行缓冲模式</li>
+<li><strong>流量控制</strong>：使用基于背压（backpressure）的流量控制机制防止生产消费不平衡</li>
+<li><strong>JSON序列化</strong>：消息以JSON格式序列化，每行一个完整的JSON对象</li>
+</ol>
+<p>在容器化环境中，stdio实现通常封装为二进制可执行文件，以JSON行（JSON Lines&#x2F;JSONL）格式进行通信，一个典型的交互流程如下：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">&#123;</span><span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;request&quot;</span><span class="hljs-punctuation">,</span><span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;req_123&quot;</span><span class="hljs-punctuation">,</span><span class="hljs-attr">&quot;content&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-punctuation">&#123;</span><span class="hljs-attr">&quot;prompt&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;Tell me a story&quot;</span><span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">&#125;</span><br><span class="hljs-punctuation">&#123;</span><span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;response&quot;</span><span class="hljs-punctuation">,</span><span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;req_123&quot;</span><span class="hljs-punctuation">,</span><span class="hljs-attr">&quot;chunk_id&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-number">1</span><span class="hljs-punctuation">,</span><span class="hljs-attr">&quot;content&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-punctuation">&#123;</span><span class="hljs-attr">&quot;text&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;Once&quot;</span><span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">&#125;</span><br><span class="hljs-punctuation">&#123;</span><span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;response&quot;</span><span class="hljs-punctuation">,</span><span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;req_123&quot;</span><span class="hljs-punctuation">,</span><span class="hljs-attr">&quot;chunk_id&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-number">2</span><span class="hljs-punctuation">,</span><span class="hljs-attr">&quot;content&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-punctuation">&#123;</span><span class="hljs-attr">&quot;text&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot; upon&quot;</span><span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">&#125;</span><br><span class="hljs-punctuation">&#123;</span><span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;response&quot;</span><span class="hljs-punctuation">,</span><span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;req_123&quot;</span><span class="hljs-punctuation">,</span><span class="hljs-attr">&quot;chunk_id&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-number">3</span><span class="hljs-punctuation">,</span><span class="hljs-attr">&quot;content&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-punctuation">&#123;</span><span class="hljs-attr">&quot;text&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot; a&quot;</span><span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">&#125;</span><br><span class="hljs-punctuation">&#123;</span><span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;response&quot;</span><span class="hljs-punctuation">,</span><span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;req_123&quot;</span><span class="hljs-punctuation">,</span><span class="hljs-attr">&quot;chunk_id&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-number">4</span><span class="hljs-punctuation">,</span><span class="hljs-attr">&quot;content&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-punctuation">&#123;</span><span class="hljs-attr">&quot;text&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot; time&quot;</span><span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">&#125;</span><br><span class="hljs-punctuation">&#123;</span><span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;response&quot;</span><span class="hljs-punctuation">,</span><span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;req_123&quot;</span><span class="hljs-punctuation">,</span><span class="hljs-attr">&quot;chunk_id&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-number">5</span><span class="hljs-punctuation">,</span><span class="hljs-attr">&quot;content&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-punctuation">&#123;</span><span class="hljs-attr">&quot;text&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;...&quot;</span><span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">,</span><span class="hljs-attr">&quot;finish_reason&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;complete&quot;</span><span class="hljs-punctuation">&#125;</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="基于SSE的MCP实现原理"><a href="#基于SSE的MCP实现原理" class="headerlink" title="基于SSE的MCP实现原理"></a>基于SSE的MCP实现原理</h3><p>SSE（Server-Sent Events）是MCP在网络环境中的主要实现技术，尤其适合云服务和远程API调用场景。其技术实现细节包括：</p>
+<ol>
+<li><strong>HTTP长连接</strong>：SSE建立在HTTP&#x2F;1.1或HTTP&#x2F;2协议之上，使用<code>Content-Type: text/event-stream</code>头</li>
+<li><strong>增量数据传输</strong>：服务器按照SSE格式推送事件数据，每个事件以<code>data:</code>前缀标识</li>
+<li><strong>事件解析</strong>：客户端使用<code>EventSource</code>API或兼容库自动解析事件流</li>
+<li><strong>自动重连</strong>：SSE协议内置重连机制，可通过<code>retry:</code>指令配置重连间隔</li>
+</ol>
+<p>SSE格式规范实例：</p>
+<figure class="highlight avrasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs avrasm"><span class="hljs-symbol">event:</span> message<br><span class="hljs-symbol">data:</span> &#123;<span class="hljs-string">&quot;id&quot;</span>:<span class="hljs-string">&quot;chunk_1&quot;</span>,<span class="hljs-string">&quot;content&quot;</span>:&#123;<span class="hljs-string">&quot;text&quot;</span>:<span class="hljs-string">&quot;AI&quot;</span>&#125;&#125;<br><br><span class="hljs-symbol">event:</span> message<br><span class="hljs-symbol">data:</span> &#123;<span class="hljs-string">&quot;id&quot;</span>:<span class="hljs-string">&quot;chunk_2&quot;</span>,<span class="hljs-string">&quot;content&quot;</span>:&#123;<span class="hljs-string">&quot;text&quot;</span>:<span class="hljs-string">&quot; is&quot;</span>&#125;&#125;<br><br><span class="hljs-symbol">event:</span> message<br><span class="hljs-symbol">data:</span> &#123;<span class="hljs-string">&quot;id&quot;</span>:<span class="hljs-string">&quot;chunk_3&quot;</span>,<span class="hljs-string">&quot;content&quot;</span>:&#123;<span class="hljs-string">&quot;text&quot;</span>:<span class="hljs-string">&quot; evolving&quot;</span>&#125;&#125;<br><br><span class="hljs-symbol">event:</span> done<br><span class="hljs-symbol">data:</span> &#123;<span class="hljs-string">&quot;finish_reason&quot;</span>:<span class="hljs-string">&quot;complete&quot;</span>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>在实际应用中，客户端使用标准的EventSource API接收这些事件并进行处理，而服务端通常使用各种Web框架提供的流式响应功能来发送SSE数据。对于Python后端，可以通过FastAPI、Flask或Django等框架的流式响应功能实现SSE数据发送。</p>
+<p>后端服务器实现时需要注意设置适当的HTTP头部，包括指定正确的媒体类型（text&#x2F;event-stream）以及确保连接不被缓存和保持活跃。客户端则需要处理连接断开和重连等情况，并正确解析接收到的JSON数据。</p>
+<h2 id="MCP标准消息格式"><a href="#MCP标准消息格式" class="headerlink" title="MCP标准消息格式"></a>MCP标准消息格式</h2><p>随着2024-2025年业界对MCP的标准化努力，目前MCP消息格式已经趋于统一，主要包含以下组件：</p>
+<h3 id="请求消息"><a href="#请求消息" class="headerlink" title="请求消息"></a>请求消息</h3><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">&#123;</span><br>  <span class="hljs-attr">&quot;model&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;gpt-4-0424&quot;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;messages&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><br>    <span class="hljs-punctuation">&#123;</span><span class="hljs-attr">&quot;role&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;system&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;content&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;你是一个有用的助手&quot;</span><span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-punctuation">&#123;</span><span class="hljs-attr">&quot;role&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;user&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;content&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;解释量子计算的基本原理&quot;</span><span class="hljs-punctuation">&#125;</span><br>  <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;stream&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">true</span></span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;temperature&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">0.7</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;max_tokens&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">2000</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;tools&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><br>    <span class="hljs-punctuation">&#123;</span><br>      <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;function&quot;</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">&quot;function&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>        <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;search_web&quot;</span><span class="hljs-punctuation">,</span><br>        <span class="hljs-attr">&quot;description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Search the web for current information&quot;</span><span class="hljs-punctuation">,</span><br>        <span class="hljs-attr">&quot;parameters&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>          <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;object&quot;</span><span class="hljs-punctuation">,</span><br>          <span class="hljs-attr">&quot;properties&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>            <span class="hljs-attr">&quot;query&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Search query&quot;</span><span class="hljs-punctuation">&#125;</span><br>          <span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">,</span><br>          <span class="hljs-attr">&quot;required&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-string">&quot;query&quot;</span><span class="hljs-punctuation">]</span><br>        <span class="hljs-punctuation">&#125;</span><br>      <span class="hljs-punctuation">&#125;</span><br>    <span class="hljs-punctuation">&#125;</span><br>  <span class="hljs-punctuation">]</span><br><span class="hljs-punctuation">&#125;</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="响应消息"><a href="#响应消息" class="headerlink" title="响应消息"></a>响应消息</h3><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">&#123;</span><br>  <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;chatcmpl-123456789&quot;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;object&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;chat.completion.chunk&quot;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;created&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1715055789</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;model&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;gpt-4-0424&quot;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;choices&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><br>    <span class="hljs-punctuation">&#123;</span><br>      <span class="hljs-attr">&quot;index&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">0</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">&quot;delta&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>        <span class="hljs-attr">&quot;content&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;量子&quot;</span><br>      <span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">&quot;finish_reason&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">null</span></span><br>    <span class="hljs-punctuation">&#125;</span><br>  <span class="hljs-punctuation">]</span><br><span class="hljs-punctuation">&#125;</span><br></code></pre></td></tr></table></figure>
+
+<h2 id="MCP的高级功能"><a href="#MCP的高级功能" class="headerlink" title="MCP的高级功能"></a>MCP的高级功能</h2><p>随着技术发展，现代MCP实现已经扩展出多种高级功能：</p>
+<h3 id="工具调用（Tool-Calling）"><a href="#工具调用（Tool-Calling）" class="headerlink" title="工具调用（Tool Calling）"></a>工具调用（Tool Calling）</h3><p>MCP协议支持模型通过工具调用与外部系统交互：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">&#123;</span><br>  <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;tool_call_123&quot;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;tool_call&quot;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;tool_calls&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><br>    <span class="hljs-punctuation">&#123;</span><br>      <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;call_abc123&quot;</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;function&quot;</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">&quot;function&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>        <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;get_weather&quot;</span><span class="hljs-punctuation">,</span><br>        <span class="hljs-attr">&quot;arguments&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;&#123;\&quot;location\&quot;:\&quot;Beijing\&quot;,\&quot;unit\&quot;:\&quot;celsius\&quot;&#125;&quot;</span><br>      <span class="hljs-punctuation">&#125;</span><br>    <span class="hljs-punctuation">&#125;</span><br>  <span class="hljs-punctuation">]</span><br><span class="hljs-punctuation">&#125;</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="并行流（Parallel-Streaming）"><a href="#并行流（Parallel-Streaming）" class="headerlink" title="并行流（Parallel Streaming）"></a>并行流（Parallel Streaming）</h3><p>最新的MCP规范已支持多流并行处理，使单个连接可同时生成多个不同内容：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">&#123;</span><br>  <span class="hljs-attr">&quot;stream_id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;stream_1&quot;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;content&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;这是第一个并行流的内容&quot;</span><br><span class="hljs-punctuation">&#125;</span><br><span class="hljs-punctuation">&#123;</span><br>  <span class="hljs-attr">&quot;stream_id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;stream_2&quot;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;content&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;同时，这是第二个并行流的内容&quot;</span><br><span class="hljs-punctuation">&#125;</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="意图控制（Intent-Control）"><a href="#意图控制（Intent-Control）" class="headerlink" title="意图控制（Intent Control）"></a>意图控制（Intent Control）</h3><p>2025年引入的意图控制允许更精确地指导模型生成，例如控制代码生成、脑暴创意或详细解释：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">&#123;</span><br>  <span class="hljs-attr">&quot;messages&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>...<span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;intent&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>    <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;code_generation&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;parameters&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>      <span class="hljs-attr">&quot;language&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;python&quot;</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">&quot;style&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;clean&quot;</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">&quot;comments&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;minimal&quot;</span><br>    <span class="hljs-punctuation">&#125;</span><br>  <span class="hljs-punctuation">&#125;</span><br><span class="hljs-punctuation">&#125;</span><br></code></pre></td></tr></table></figure>
+
+<h2 id="MCP的底层协议优化"><a href="#MCP的底层协议优化" class="headerlink" title="MCP的底层协议优化"></a>MCP的底层协议优化</h2><p>为提高传输效率，现代MCP实现采用了多种底层优化技术：</p>
+<ol>
+<li><strong>增量编码</strong>：仅传输差异内容，减少带宽消耗</li>
+<li><strong>二进制协议变体</strong>：使用Protocol Buffers或MessagePack等二进制格式提高效率</li>
+<li><strong>响应压缩</strong>：应用GZIP或Brotli压缩算法减小传输大小</li>
+<li><strong>批量传输</strong>：小型文本片段合并传输，减少网络往返</li>
+<li><strong>优先级控制</strong>：关键数据包优先传输，提高用户体验</li>
+</ol>
+<h2 id="MCP在生产环境中的实现挑战"><a href="#MCP在生产环境中的实现挑战" class="headerlink" title="MCP在生产环境中的实现挑战"></a>MCP在生产环境中的实现挑战</h2><p>真实世界中部署MCP面临的技术挑战包括：</p>
+<ol>
+<li><strong>分布式系统复杂性</strong>：需要在多节点环境中维护连接状态</li>
+<li><strong>故障恢复机制</strong>：服务中断时的会话恢复和状态保持</li>
+<li><strong>资源限制处理</strong>：<ul>
+<li>连接池管理：有效分配和复用连接资源</li>
+<li>超时控制：处理未响应或长时间计算情况</li>
+<li>负载均衡：在多模型实例间均衡分配请求</li>
+</ul>
+</li>
+<li><strong>安全隐患</strong>：<ul>
+<li>针对长连接的DDoS攻击防护</li>
+<li>令牌计费与限流：按流式传输内容准确计费</li>
+<li>身份验证与会话维护：在长时间连接中保持认证状态</li>
+</ul>
+</li>
+</ol>
+<h2 id="未来发展趋势"><a href="#未来发展趋势" class="headerlink" title="未来发展趋势"></a>未来发展趋势</h2><p>展望2025年后的MCP技术演进，可以预见以下几个重要发展方向：</p>
+<ol>
+<li><p><strong>通用性扩展</strong>：</p>
+<ul>
+<li><strong>多模态统一接口</strong>：扩展同一协议支持文本、图像、音频和视频</li>
+<li><strong>跨厂商互操作性</strong>：不同AI供应商实现兼容的MCP变体</li>
+</ul>
+</li>
+<li><p><strong>性能优化</strong>：</p>
+<ul>
+<li><strong>量子优化传输</strong>：利用量子加密提高安全性和性能</li>
+<li><strong>可微分协议</strong>：使通信协议本身成为可学习的组件</li>
+<li><strong>预测性缓存</strong>：基于用户行为预测可能需要的信息</li>
+</ul>
+</li>
+<li><p><strong>新交互模式</strong>：</p>
+<ul>
+<li><strong>双向流</strong>：客户端也可以向服务器流式发送内容</li>
+<li><strong>上下文感知压缩</strong>：基于语义的高效压缩技术</li>
+<li><strong>分布式协作</strong>：多个模型协同工作的协议扩展</li>
+</ul>
+</li>
+</ol>
+<h2 id="实现MCP的框架与工具"><a href="#实现MCP的框架与工具" class="headerlink" title="实现MCP的框架与工具"></a>实现MCP的框架与工具</h2><p>目前已有多种框架和库支持MCP协议实现：</p>
+<ol>
+<li><p><strong>客户端库</strong>：</p>
+<ul>
+<li><code>openai-node</code>：官方Node.js SDK，支持流式响应</li>
+<li><code>langchain-js</code>：支持TypeScript的流式处理库</li>
+<li><code>anthropic-sdk</code>：Anthropic Claude的官方SDK，支持流式响应</li>
+</ul>
+</li>
+<li><p><strong>服务端框架</strong>：</p>
+<ul>
+<li><code>langserve</code>：LangChain的模型服务框架</li>
+<li><code>inference-endpoints</code>：可扩展的模型部署与服务系统</li>
+<li><code>ollama</code>：本地LLM模型部署与服务</li>
+</ul>
+</li>
+<li><p><strong>开发工具</strong>：</p>
+<ul>
+<li>ChatGPT Playground：协议测试与调试工具</li>
+<li>LangSmith：流量分析与优化工具</li>
+</ul>
+</li>
+</ol>
+<h2 id="Function-Call-vs-Prompt-based-MCP实现对比"><a href="#Function-Call-vs-Prompt-based-MCP实现对比" class="headerlink" title="Function Call vs. Prompt-based MCP实现对比"></a>Function Call vs. Prompt-based MCP实现对比</h2><p>MCP的实际部署通常采用两种主要方式实现模型与外部系统的交互：一种是依赖模型自身的function_call能力，另一种是通过对话中的prompt引导模型生成特定格式的输出。这两种方式各有优缺点，适用于不同场景。</p>
+<h3 id="基于Function-Call的MCP实现"><a href="#基于Function-Call的MCP实现" class="headerlink" title="基于Function Call的MCP实现"></a>基于Function Call的MCP实现</h3><p>基于Function Call的实现依赖模型理解和执行特定函数调用的能力，通过在请求中明确定义工具规范，让模型选择何时调用这些工具。</p>
+<p><strong>优点：</strong></p>
+<ol>
+<li><strong>结构化输出：</strong> 模型输出严格遵循预定义的JSON Schema，降低解析出错风险</li>
+<li><strong>明确的调用意图：</strong> 模型明确知道何时应该调用外部函数，减少歧义</li>
+<li><strong>参数校验：</strong> 可以在工具定义中指定参数类型和约束，防止错误参数</li>
+<li><strong>多工具支持：</strong> 可同时定义多个工具供模型选择使用</li>
+<li><strong>语义清晰：</strong> 代码中工具调用和普通文本响应明确分离</li>
+</ol>
+<p><strong>缺点：</strong></p>
+<ol>
+<li><strong>模型依赖性：</strong> 需要特定模型支持function_call功能，不是所有模型都具备</li>
+<li><strong>复杂性增加：</strong> 系统实现复杂度提高，需处理工具注册、调用和响应</li>
+<li><strong>成本更高：</strong> 通常依赖较先进的商业模型，实现成本较高</li>
+<li><strong>灵活性限制：</strong> 工具定义一旦确定，难以动态调整应对临时需求</li>
+<li><strong>延迟增加：</strong> 多轮工具调用可能增加总体交互延迟</li>
+</ol>
+<p>Function Call式MCP的请求格式通常包含明确的工具定义，指定函数名称、描述和参数结构，模型会根据用户输入内容决定是否调用这些函数。</p>
+<h3 id="基于Prompt的MCP实现"><a href="#基于Prompt的MCP实现" class="headerlink" title="基于Prompt的MCP实现"></a>基于Prompt的MCP实现</h3><p>基于Prompt的实现通过精心设计的提示词指导模型生成符合特定格式的输出，然后通过解析这些输出来实现类似功能调用的效果。</p>
+<p><strong>优点：</strong></p>
+<ol>
+<li><strong>通用性强：</strong> 几乎适用于任何具备基本理解能力的模型，不依赖特定功能</li>
+<li><strong>实现简单：</strong> 不需要复杂的框架支持，降低实现门槛</li>
+<li><strong>成本较低：</strong> 可使用开源或较低成本的模型实现</li>
+<li><strong>高度灵活：</strong> 可以迅速调整提示词以适应新需求，无需修改系统架构</li>
+<li><strong>部署便捷：</strong> 对系统架构要求低，易于集成到现有应用中</li>
+</ol>
+<p><strong>缺点：</strong></p>
+<ol>
+<li><strong>一致性较差：</strong> 模型可能不严格遵循输出格式要求，增加解析难度</li>
+<li><strong>错误率较高：</strong> 模型可能混淆指令，导致输出格式错误或参数不完整</li>
+<li><strong>上下文依赖：</strong> 需要占用大量上下文窗口解释指令，减少可用于实际对话的空间</li>
+<li><strong>调试困难：</strong> 当模型输出不符合预期时，难以精确定位问题</li>
+<li><strong>版本敏感：</strong> 模型版本更新可能导致原有提示策略失效</li>
+</ol>
+<p>Prompt式MCP实现通常通过系统提示指导模型行为，例如要求模型在特定情况下生成JSON格式的输出，并在后续解析这些输出来执行相应操作。</p>
+<h3 id="混合方法"><a href="#混合方法" class="headerlink" title="混合方法"></a>混合方法</h3><p>在实际应用中，许多先进的MCP实现采用混合方法，结合两种方式的优点：</p>
+<ol>
+<li><strong>降级策略：</strong> 优先使用function_call，当不可用时降级到prompt-based方法</li>
+<li><strong>分层实现：</strong> 核心功能使用function_call实现，边缘场景使用prompt实现</li>
+<li><strong>适配层：</strong> 在prompt和function_call之间构建转换层，统一接口</li>
+</ol>
+<p>随着2025年MCP技术的标准化进程推进，业界正在努力统一这两种方法，希望在保持灵活性的同时提供更稳定的接口体验。特别是新兴的”意图控制”规范（前文所述），正是为了解决这两种方法间的差异而设计的。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>MCP技术作为连接AI模型与应用程序的桥梁，通过stdio和SSE两种实现方式提供了高效、灵活的通信机制。随着大语言模型应用场景不断扩展和深化，MCP协议已在2025年成为AI应用开发的基础设施，支撑着从本地部署到云服务的各种复杂交互场景。其标准化进程、多模态支持扩展、性能优化技术和新兴交互模式将继续推动AI应用体验的革新与进步。</p>
+<p>——wicos 2025&#x2F;04&#x2F;04 </p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/jishu/" class="category-chain-item">技术</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/AI/" class="print-no-link">#AI</a>
+      
+        <a href="/tags/MCP/" class="print-no-link">#MCP</a>
+      
+        <a href="/tags/%E6%8A%80%E6%9C%AF/" class="print-no-link">#技术</a>
+      
+        <a href="/tags/LLM/" class="print-no-link">#LLM</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>AI中的MCP技术解析：stdio与SSE实现</div>
+      <div>https://www.wicos.me/jishu/1160/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Wicos</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年4月4日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/jishu/1158/" title="hexo博客优化+部署">
+                        <span class="hidden-mobile">hexo博客优化+部署</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="twikoo"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#comments', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/twikoo/1.6.8/twikoo.all.min.js', function() {
+        var options = Object.assign(
+          {"envId":"https://comment.wicos.me","region":"ap-shanghai","path":"window.location.pathname"},
+          {
+            el: '#twikoo',
+            path: 'window.location.pathname',
+            onCommentLoaded: function() {
+              Fluid.utils.listenDOMLoaded(function() {
+                var imgSelector = '#twikoo .tk-content img:not(.tk-owo-emotion)';
+                Fluid.plugins.imageCaption(imgSelector);
+                Fluid.plugins.fancyBox(imgSelector);
+              });
+            }
+          }
+        )
+        twikoo.init(options)
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+      <a target="_blank" rel="noopener" href="https://github.com/pidbid"><span>Pidbid Github</span></a>
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
