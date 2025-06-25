@@ -7,8 +7,11 @@
 
 <head>
   <meta charset="UTF-8">
+
   <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
   <link rel="icon" href="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/logo.ico">
+  
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   
@@ -16,16 +19,16 @@
   <meta name="author" content="Wicos">
   <meta name="keywords" content="">
   
-    <meta name="description" content="写在前面Hyac 是曾经做过的一个项目，但我认为曾经的自己没有把它做的更好，所以重新将其重构出来，也计划将其作为我开源生涯中到目前位置最复杂的项目，同时我更加的希望此项目可以帮助更多的人。    开始Hyac 是什么终极的 Hyac 是一个 可伸缩的、弹性的、高性能的 Python Serverless 框架。一言以蔽之，Hyac 就是一个支持在线编码的Python后端web框架，该框架集成了">
+    <meta name="description" content="写在前面Hyac 是曾经做过的一个项目，但我认为曾经的自己没有把它做的更好，所以重新将其重构出来，也计划将其作为我开源生涯中到目前为止最复杂的项目，同时我更加的希望此项目可以帮助更多的人。    开始Hyac 是什么 Hyac 的名字取自 Hyacinthus 风信子终极的 Hyac 是一个 可伸缩的、弹性的、高性能的 Python Serverless 框架。一言以蔽之，Hyac 就是一个支">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Hyac 开发一：一切从重构开始">
 <meta property="og:url" content="https://www.wicos.me/jishu/1163/index.html">
 <meta property="og:site_name" content="Wicos&#39;s Blog.">
-<meta property="og:description" content="写在前面Hyac 是曾经做过的一个项目，但我认为曾经的自己没有把它做的更好，所以重新将其重构出来，也计划将其作为我开源生涯中到目前位置最复杂的项目，同时我更加的希望此项目可以帮助更多的人。    开始Hyac 是什么终极的 Hyac 是一个 可伸缩的、弹性的、高性能的 Python Serverless 框架。一言以蔽之，Hyac 就是一个支持在线编码的Python后端web框架，该框架集成了">
+<meta property="og:description" content="写在前面Hyac 是曾经做过的一个项目，但我认为曾经的自己没有把它做的更好，所以重新将其重构出来，也计划将其作为我开源生涯中到目前为止最复杂的项目，同时我更加的希望此项目可以帮助更多的人。    开始Hyac 是什么 Hyac 的名字取自 Hyacinthus 风信子终极的 Hyac 是一个 可伸缩的、弹性的、高性能的 Python Serverless 框架。一言以蔽之，Hyac 就是一个支">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/upload/202506030814411.png">
 <meta property="article:published_time" content="2025-06-03T00:00:00.000Z">
-<meta property="article:modified_time" content="2025-06-03T02:20:14.004Z">
+<meta property="article:modified_time" content="2025-06-25T13:53:21.312Z">
 <meta property="article:author" content="Wicos">
 <meta property="article:tag" content="Python">
 <meta property="article:tag" content="Hyac">
@@ -53,11 +56,11 @@
 <!-- 主题依赖的图标库，不要自行修改 -->
 <!-- Do not modify the link that theme dependent icons -->
 
-<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
 
 
 
-<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
 
 
 <link  rel="stylesheet" href="/css/main.css" />
@@ -74,7 +77,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"www.wicos.me","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"www.wicos.me","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -238,7 +241,7 @@
         <i class="iconfont icon-chart"></i>
         
           <!-- compatible with older versions-->
-          221 字
+          238 字
         
       </span>
     
@@ -294,9 +297,11 @@
                 
                 <p><img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/upload/202506030814411.png" srcset="/img/loading.gif" lazyload></p>
 <blockquote>
-<p><strong>写在前面</strong><br>Hyac 是曾经做过的一个项目，但我认为曾经的自己没有把它做的更好，所以重新将其重构出来，也计划将其作为我开源生涯中到目前位置最复杂的项目，同时我更加的希望此项目可以帮助更多的人。  </p>
+<p><strong>写在前面</strong><br>Hyac 是曾经做过的一个项目，但我认为曾经的自己没有把它做的更好，所以重新将其重构出来，也计划将其作为我开源生涯中到目前为止最复杂的项目，同时我更加的希望此项目可以帮助更多的人。  </p>
 </blockquote>
-<h1 id="开始"><a href="#开始" class="headerlink" title="开始"></a>开始</h1><h2 id="Hyac-是什么"><a href="#Hyac-是什么" class="headerlink" title="Hyac 是什么"></a>Hyac 是什么</h2><p><strong>终极</strong>的 Hyac 是一个 可伸缩的、弹性的、高性能的 Python Serverless 框架。一言以蔽之，Hyac 就是一个支持在线编码的Python后端web框架，该框架集成了数据库、文件存储等功能。</p>
+<h1 id="开始"><a href="#开始" class="headerlink" title="开始"></a>开始</h1><h2 id="Hyac-是什么"><a href="#Hyac-是什么" class="headerlink" title="Hyac 是什么"></a>Hyac 是什么</h2><blockquote>
+<p>Hyac 的名字取自 <strong>Hyacinthus 风信子</strong><br><strong>终极</strong>的 Hyac 是一个 可伸缩的、弹性的、高性能的 Python Serverless 框架。一言以蔽之，Hyac 就是一个支持在线编码的Python后端web框架，该框架集成了数据库、文件存储等功能。</p>
+</blockquote>
 <h2 id="Hyac-的设计教条是什么"><a href="#Hyac-的设计教条是什么" class="headerlink" title="Hyac 的设计教条是什么"></a>Hyac 的设计教条是什么</h2><p>复杂简单化，简单无感化 —— 将复杂变得更加简单，将原本简单的事情变得无感</p>
 <h2 id="Hyac-基本框架"><a href="#Hyac-基本框架" class="headerlink" title="Hyac 基本框架"></a>Hyac 基本框架</h2><pre><code class="mermaid">---  
 title: Hyac 基本框架  
@@ -325,7 +330,13 @@ flowchart TB
     end
   end
 </code></pre>
-<h2 id="等待更新中"><a href="#等待更新中" class="headerlink" title="等待更新中"></a>等待更新中</h2>
+<h2 id="如何使用？"><a href="#如何使用？" class="headerlink" title="如何使用？"></a>如何使用？</h2><ul>
+<li>一行代码 开箱即用<blockquote>
+<p>docker compose up -d</p>
+</blockquote>
+</li>
+</ul>
+
                 
               </div>
             
@@ -398,7 +409,7 @@ flowchart TB
               
                 <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
                   <span class="hint--top hint--rounded" aria-label="BY - 署名">
-                    <i class="iconfont icon-by"></i>
+                    <i class="iconfont icon-cc-by"></i>
                   </span>
                 </a>
               
@@ -421,8 +432,8 @@ flowchart TB
                   <article class="post-next col-6">
                     
                     
-                      <a href="/jishu/1162/" title="ESP32 使用 Arduino 连接加密的 MQTT 服务器">
-                        <span class="hidden-mobile">ESP32 使用 Arduino 连接加密的 MQTT 服务器</span>
+                      <a href="/jishu/1165/" title="Hyac 开发三：应用容器环境变量的动态加载与持久化">
+                        <span class="hidden-mobile">Hyac 开发三：应用容器环境变量的动态加载与持久化</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
@@ -597,10 +608,11 @@ flowchart TB
       </span>
     
     
-  
-</div>
 
   
+
+</div>
+
   
   
 </div>
@@ -699,7 +711,7 @@ flowchart TB
 
   
 <script>
-  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
     window.anchors.options = {
       placement: CONFIG.anchorjs.placement,
       visible  : CONFIG.anchorjs.visible

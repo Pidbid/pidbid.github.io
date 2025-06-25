@@ -8,7 +8,61 @@
     <link href="/jishu/1163/"/>
     <url>/jishu/1163/</url>
     
-    <content type="html"><![CDATA[<p><img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/upload/202506030814411.png"></p><blockquote><p><strong>写在前面</strong><br>Hyac 是曾经做过的一个项目，但我认为曾经的自己没有把它做的更好，所以重新将其重构出来，也计划将其作为我开源生涯中到目前位置最复杂的项目，同时我更加的希望此项目可以帮助更多的人。  </p></blockquote><h1 id="开始"><a href="#开始" class="headerlink" title="开始"></a>开始</h1><h2 id="Hyac-是什么"><a href="#Hyac-是什么" class="headerlink" title="Hyac 是什么"></a>Hyac 是什么</h2><p><strong>终极</strong>的 Hyac 是一个 可伸缩的、弹性的、高性能的 Python Serverless 框架。一言以蔽之，Hyac 就是一个支持在线编码的Python后端web框架，该框架集成了数据库、文件存储等功能。</p><h2 id="Hyac-的设计教条是什么"><a href="#Hyac-的设计教条是什么" class="headerlink" title="Hyac 的设计教条是什么"></a>Hyac 的设计教条是什么</h2><p>复杂简单化，简单无感化 —— 将复杂变得更加简单，将原本简单的事情变得无感</p><h2 id="Hyac-基本框架"><a href="#Hyac-基本框架" class="headerlink" title="Hyac 基本框架"></a>Hyac 基本框架</h2><pre><code class="mermaid">---  title: Hyac 基本框架  ---  flowchart TB  subgraph Middle    direction TB    Mongodb    Redis    Minio  end  subgraph Python    Mongodb--&gt;Fastapi    Redis--&gt;Fastapi    Minio--&gt;Fastapi    Fastapi--&gt;Mongodb    Fastapi--&gt;Redis    Fastapi--&gt;Minio  end  subgraph User    subgraph Admin      Fastapi--&gt;Soybean    end    subgraph Others      Fastapi--&gt;Custom    end  end</code></pre><h2 id="等待更新中"><a href="#等待更新中" class="headerlink" title="等待更新中"></a>等待更新中</h2>]]></content>
+    <content type="html"><![CDATA[<p><img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/upload/202506030814411.png"></p><blockquote><p><strong>写在前面</strong><br>Hyac 是曾经做过的一个项目，但我认为曾经的自己没有把它做的更好，所以重新将其重构出来，也计划将其作为我开源生涯中到目前为止最复杂的项目，同时我更加的希望此项目可以帮助更多的人。  </p></blockquote><h1 id="开始"><a href="#开始" class="headerlink" title="开始"></a>开始</h1><h2 id="Hyac-是什么"><a href="#Hyac-是什么" class="headerlink" title="Hyac 是什么"></a>Hyac 是什么</h2><blockquote><p>Hyac 的名字取自 <strong>Hyacinthus 风信子</strong><br><strong>终极</strong>的 Hyac 是一个 可伸缩的、弹性的、高性能的 Python Serverless 框架。一言以蔽之，Hyac 就是一个支持在线编码的Python后端web框架，该框架集成了数据库、文件存储等功能。</p></blockquote><h2 id="Hyac-的设计教条是什么"><a href="#Hyac-的设计教条是什么" class="headerlink" title="Hyac 的设计教条是什么"></a>Hyac 的设计教条是什么</h2><p>复杂简单化，简单无感化 —— 将复杂变得更加简单，将原本简单的事情变得无感</p><h2 id="Hyac-基本框架"><a href="#Hyac-基本框架" class="headerlink" title="Hyac 基本框架"></a>Hyac 基本框架</h2><pre><code class="mermaid">---  title: Hyac 基本框架  ---  flowchart TB  subgraph Middle    direction TB    Mongodb    Redis    Minio  end  subgraph Python    Mongodb--&gt;Fastapi    Redis--&gt;Fastapi    Minio--&gt;Fastapi    Fastapi--&gt;Mongodb    Fastapi--&gt;Redis    Fastapi--&gt;Minio  end  subgraph User    subgraph Admin      Fastapi--&gt;Soybean    end    subgraph Others      Fastapi--&gt;Custom    end  end</code></pre><h2 id="如何使用？"><a href="#如何使用？" class="headerlink" title="如何使用？"></a>如何使用？</h2><ul><li>一行代码 开箱即用<blockquote><p>docker compose up -d</p></blockquote></li></ul>]]></content>
+    
+    
+    <categories>
+      
+      <category>技术</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>Python</tag>
+      
+      <tag>Hyac</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>Hyac 开发三：应用容器环境变量的动态加载与持久化</title>
+    <link href="/jishu/1165/"/>
+    <url>/jishu/1165/</url>
+    
+    <content type="html"><![CDATA[<p><img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/upload/202506172247822.jpg"></p><h1 id="等待补充"><a href="#等待补充" class="headerlink" title="等待补充"></a>等待补充</h1>]]></content>
+    
+    
+    <categories>
+      
+      <category>技术</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>Python</tag>
+      
+      <tag>Hyac</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>Hyac 开发一：应用容器私有依赖安装的实现</title>
+    <link href="/jishu/1164/"/>
+    <url>/jishu/1164/</url>
+    
+    <content type="html"><![CDATA[<p><img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/upload/202506172247822.jpg"></p><h2 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h2><p>对于一个Faas框架来说，每一个应用容器都是独立的开发环境，在独立的开发环境中，实现特定的依赖安装是非常必要的。  </p><h2 id="实现思路"><a href="#实现思路" class="headerlink" title="实现思路"></a>实现思路</h2><p>Hyac的运行逻辑是 server 管理多个app runtime，每一个 runtime 都在单独的 docker 容器中，在每个容器启动之后，在依赖安装部分，需要执行两个操作，首先安装公共依赖（后续为了启动速度的优化，可能会将系统依赖打包至image内），其次需要安装用户所需的依赖。  </p><h3 id="一般的python项目安装依赖方式"><a href="#一般的python项目安装依赖方式" class="headerlink" title="一般的python项目安装依赖方式"></a>一般的python项目安装依赖方式</h3><p>普通的情况下，在开发过程中，动态的添加、删除依赖，发布之前可以通过pip生成一份requirements.txt (<code>pip freeze &gt; requirements.txt</code>)。当其它环境下运行此项目时可以通过 <code>pip install -r requirements.txt</code>。但Hyac的运行环境中除系统依赖外，随着用户的开发过程，所使用的依赖也一定是变化的。因此这个问题就变成了如何 实现<strong>可变依赖的安装</strong>逻辑。</p><h3 id="问题拆解"><a href="#问题拆解" class="headerlink" title="问题拆解"></a>问题拆解</h3><p>当我们分析这个问题时，可以简单的从中提取一些关键信息，如下  </p><ul><li>依赖数据存储在哪、以什么格式存储  </li><li>程序启动时如何初始化安装项目依赖  </li><li>项目依赖如何动态的添加与删除<br>围绕以上三个问题，逐一解决，那么Hyac项目中的依赖管理部分就可以完成了，接下来就是具体的实现方案。</li></ul><h2 id="实现步骤"><a href="#实现步骤" class="headerlink" title="实现步骤"></a>实现步骤</h2><h3 id="依赖数据的存储与格式"><a href="#依赖数据的存储与格式" class="headerlink" title="依赖数据的存储与格式"></a>依赖数据的存储与格式</h3><p>首先需要考虑继续使用 requirements.txt 文件是否合适，如果继续使用会有以下几个问题：  </p><ul><li>requirements.txt 文件的读写效率不高  </li><li>当一个项目多个人操作的时候，对单个文件的读写操作会发生冲突  </li><li>实现方式不优雅<br>综合以上问题，最终决定使用mongodb提供依赖数据的存储，接下来需要设计依赖数据的安装结构，因此将依赖信息放置在应用（Application）文档上，结构如下：  <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs javascript">&#123;<br>  <span class="hljs-string">&quot;app_id&quot;</span>: <span class="hljs-string">&quot;hyac_demo&quot;</span>,<br>  ...<br>  <span class="hljs-string">&quot;dependencies&quot;</span>:[<br>    &#123;<br>      <span class="hljs-string">&quot;name&quot;</span>: <span class="hljs-string">&quot;requests&quot;</span>,<br>      <span class="hljs-string">&quot;version&quot;</span>: <span class="hljs-string">&quot;0.0.1&quot;</span><br>    &#125;,<br>    &#123;<br>      <span class="hljs-string">&quot;name&quot;</span>: <span class="hljs-string">&quot;pillow&quot;</span>,<br>      <span class="hljs-string">&quot;version&quot;</span>: <span class="hljs-string">&quot;0.0.1&quot;</span><br>    &#125;<br>  ],<br>  ...<br>&#125;<br></code></pre></td></tr></table></figure></li></ul><h3 id="应用启动时依赖的初始化"><a href="#应用启动时依赖的初始化" class="headerlink" title="应用启动时依赖的初始化"></a>应用启动时依赖的初始化</h3><p>因为需要将依赖安装到当前的运行环境中，首先查询数据库获取当前运行环境的依赖信息，之后生成安装命令 <code>install_command = uv pip install [package name] == [ package version ] -- system</code>，接下来是实现动态安装功能的核心：</p><pre><code class="python">process = await asyncio.create_subprocess_exec(    *install_command,    stdout=asyncio.subprocess.PIPE,    stderr=asyncio.subprocess.PIPE,)</code></pre><p>之后我们可以通过获取这个管道的返回码与输出，来判断某个依赖是否安装成功。</p><h3 id="如何动态的添加与删除"><a href="#如何动态的添加与删除" class="headerlink" title="如何动态的添加与删除"></a>如何动态的添加与删除</h3><p>实际开发中，这部分的实现时最简单的，首先 <code>https://pypi.org/simple/</code> 会返回当前所有 python 官方的依赖，我们可以获取到所有的依赖名称，之后通过对比来判断用户输入的依赖是否合法。如果用户输入的依赖是合法的，那么继续下一步<strong>选择某一个依赖的版本</strong>，选择版本时可以访问 <code>https://pypi.org/pypi/[package name]/json</code>接口，这个接口可以返回我们需要的信息，包括名称、描述、版本等。<br>当用户选择完毕之后，我们将用户选择的依赖添加入数据库即可。</p>]]></content>
     
     
     <categories>
