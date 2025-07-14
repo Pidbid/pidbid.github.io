@@ -21,14 +21,14 @@
   
     <meta name="description" content="写在前面对于一个Faas框架来说，每一个应用容器都是独立的开发环境，在独立的开发环境中，实现特定的依赖安装是非常必要的。   实现思路Hyac的运行逻辑是 server 管理多个app runtime，每一个 runtime 都在单独的 docker 容器中，在每个容器启动之后，在依赖安装部分，需要执行两个操作，首先安装公共依赖（后续为了启动速度的优化，可能会将系统依赖打包至image内），其次">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Hyac 开发一：应用容器私有依赖安装的实现">
+<meta property="og:title" content="Hyac 开发二：应用容器私有依赖安装的实现">
 <meta property="og:url" content="https://www.wicos.me/jishu/1164/index.html">
 <meta property="og:site_name" content="Wicos&#39;s Blog.">
 <meta property="og:description" content="写在前面对于一个Faas框架来说，每一个应用容器都是独立的开发环境，在独立的开发环境中，实现特定的依赖安装是非常必要的。   实现思路Hyac的运行逻辑是 server 管理多个app runtime，每一个 runtime 都在单独的 docker 容器中，在每个容器启动之后，在依赖安装部分，需要执行两个操作，首先安装公共依赖（后续为了启动速度的优化，可能会将系统依赖打包至image内），其次">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/upload/202506172247822.jpg">
 <meta property="article:published_time" content="2025-06-03T00:00:00.000Z">
-<meta property="article:modified_time" content="2025-06-25T13:53:21.312Z">
+<meta property="article:modified_time" content="2025-07-14T11:13:52.440Z">
 <meta property="article:author" content="Wicos">
 <meta property="article:tag" content="Python">
 <meta property="article:tag" content="Hyac">
@@ -39,7 +39,7 @@
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>Hyac 开发一：应用容器私有依赖安装的实现 - Wicos&#39;s Blog.</title>
+  <title>Hyac 开发二：应用容器私有依赖安装的实现 - Wicos&#39;s Blog.</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -217,7 +217,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="Hyac 开发一：应用容器私有依赖安装的实现"></span>
+            <span id="subtitle" data-typed-text="Hyac 开发二：应用容器私有依赖安装的实现"></span>
           
         </div>
 
@@ -290,7 +290,7 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">Hyac 开发一：应用容器私有依赖安装的实现</h1>
+            <h1 id="seo-header">Hyac 开发二：应用容器私有依赖安装的实现</h1>
             
             
               <div class="markdown-body">
@@ -367,7 +367,7 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>Hyac 开发一：应用容器私有依赖安装的实现</div>
+      <div>Hyac 开发二：应用容器私有依赖安装的实现</div>
       <div>https://www.wicos.me/jishu/1164/</div>
     </div>
     <div class="license-meta">
