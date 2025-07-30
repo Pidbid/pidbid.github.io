@@ -19,27 +19,27 @@
   <meta name="author" content="Wicos">
   <meta name="keywords" content="">
   
-    <meta name="description" content="写在前面对于一个Faas框架来说，每一个应用容器都是独立的开发环境，在独立的开发环境中，实现特定的依赖安装是非常必要的。   实现思路Hyac的运行逻辑是 server 管理多个app runtime，每一个 runtime 都在单独的 docker 容器中，在每个容器启动之后，在依赖安装部分，需要执行两个操作，首先安装公共依赖（后续为了启动速度的优化，可能会将系统依赖打包至image内），其次">
+    <meta name="description" content="写在前面 如果你要做web代码编辑器，那么你第一个踩的坑就是 —— Monaco，有时候及时放弃才是一种好习惯最近在开发 Hyac，由于需要支持Python在线编辑，同时我还希望能够支持Lsp，因此不得不选择一款web编辑器，我与Monaco的爱恨情仇从此开始……    为什么是 Monaco Editor目前市面上可用的web编辑器项目不多，大概只有以下这三款：  Monaco Editor">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Hyac 开发二：应用容器私有依赖安装的实现">
-<meta property="og:url" content="https://www.wicos.me/jishu/1164/index.html">
+<meta property="og:title" content="Hyac 开发四：我与Monaco Editor + Lsp 的爱恨情仇">
+<meta property="og:url" content="https://www.wicos.me/jishu/1166/index.html">
 <meta property="og:site_name" content="Wicos&#39;s Blog.">
-<meta property="og:description" content="写在前面对于一个Faas框架来说，每一个应用容器都是独立的开发环境，在独立的开发环境中，实现特定的依赖安装是非常必要的。   实现思路Hyac的运行逻辑是 server 管理多个app runtime，每一个 runtime 都在单独的 docker 容器中，在每个容器启动之后，在依赖安装部分，需要执行两个操作，首先安装公共依赖（后续为了启动速度的优化，可能会将系统依赖打包至image内），其次">
+<meta property="og:description" content="写在前面 如果你要做web代码编辑器，那么你第一个踩的坑就是 —— Monaco，有时候及时放弃才是一种好习惯最近在开发 Hyac，由于需要支持Python在线编辑，同时我还希望能够支持Lsp，因此不得不选择一款web编辑器，我与Monaco的爱恨情仇从此开始……    为什么是 Monaco Editor目前市面上可用的web编辑器项目不多，大概只有以下这三款：  Monaco Editor">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/upload/202506172247822.jpg">
+<meta property="og:image" content="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/upload/202507302131869.jpg">
 <meta property="article:published_time" content="2025-06-03T00:00:00.000Z">
 <meta property="article:modified_time" content="2025-07-30T14:33:53.245Z">
 <meta property="article:author" content="Wicos">
 <meta property="article:tag" content="Python">
 <meta property="article:tag" content="Hyac">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/upload/202506172247822.jpg">
+<meta name="twitter:image" content="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/upload/202507302131869.jpg">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>Hyac 开发二：应用容器私有依赖安装的实现 - Wicos&#39;s Blog.</title>
+  <title>Hyac 开发四：我与Monaco Editor + Lsp 的爱恨情仇 - Wicos&#39;s Blog.</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -211,13 +211,13 @@
   
 
 <div id="banner" class="banner" parallax=true
-     style="background: url('https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/upload/202506172247822.jpg') no-repeat center center; background-size: cover;">
+     style="background: url('https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/upload/202507302131869.jpg') no-repeat center center; background-size: cover;">
   <div class="full-bg-img">
     <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="Hyac 开发二：应用容器私有依赖安装的实现"></span>
+            <span id="subtitle" data-typed-text="Hyac 开发四：我与Monaco Editor + Lsp 的爱恨情仇"></span>
           
         </div>
 
@@ -241,7 +241,7 @@
         <i class="iconfont icon-chart"></i>
         
           <!-- compatible with older versions-->
-          891 字
+          1.1k 字
         
       </span>
     
@@ -253,7 +253,7 @@
         
         
           <!-- compatible with older versions-->
-          8 分钟
+          9 分钟
         
       </span>
     
@@ -290,36 +290,38 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">Hyac 开发二：应用容器私有依赖安装的实现</h1>
+            <h1 id="seo-header">Hyac 开发四：我与Monaco Editor + Lsp 的爱恨情仇</h1>
             
             
               <div class="markdown-body">
                 
-                <p><img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/upload/202506172247822.jpg" srcset="/img/loading.gif" lazyload></p>
-<h2 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h2><p>对于一个Faas框架来说，每一个应用容器都是独立的开发环境，在独立的开发环境中，实现特定的依赖安装是非常必要的。  </p>
-<h2 id="实现思路"><a href="#实现思路" class="headerlink" title="实现思路"></a>实现思路</h2><p>Hyac的运行逻辑是 server 管理多个app runtime，每一个 runtime 都在单独的 docker 容器中，在每个容器启动之后，在依赖安装部分，需要执行两个操作，首先安装公共依赖（后续为了启动速度的优化，可能会将系统依赖打包至image内），其次需要安装用户所需的依赖。  </p>
-<h3 id="一般的python项目安装依赖方式"><a href="#一般的python项目安装依赖方式" class="headerlink" title="一般的python项目安装依赖方式"></a>一般的python项目安装依赖方式</h3><p>普通的情况下，在开发过程中，动态的添加、删除依赖，发布之前可以通过pip生成一份requirements.txt (<code>pip freeze &gt; requirements.txt</code>)。当其它环境下运行此项目时可以通过 <code>pip install -r requirements.txt</code>。但Hyac的运行环境中除系统依赖外，随着用户的开发过程，所使用的依赖也一定是变化的。因此这个问题就变成了如何 实现<strong>可变依赖的安装</strong>逻辑。</p>
-<h3 id="问题拆解"><a href="#问题拆解" class="headerlink" title="问题拆解"></a>问题拆解</h3><p>当我们分析这个问题时，可以简单的从中提取一些关键信息，如下  </p>
+                <p><img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/upload/202507302131869.jpg" srcset="/img/loading.gif" lazyload></p>
+<h3 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h3><blockquote>
+<p>如果你要做web代码编辑器，那么你第一个踩的坑就是 —— Monaco，有时候及时放弃才是一种好习惯<br>最近在开发 Hyac，由于需要支持Python在线编辑，同时我还希望能够支持Lsp，因此不得不选择一款web编辑器，我与Monaco的爱恨情仇从此开始……  </p>
+</blockquote>
+<h1 id="为什么是-Monaco-Editor"><a href="#为什么是-Monaco-Editor" class="headerlink" title="为什么是 Monaco Editor"></a>为什么是 Monaco Editor</h1><p>目前市面上可用的web编辑器项目不多，大概只有以下这三款：</p>
 <ul>
-<li>依赖数据存储在哪、以什么格式存储  </li>
-<li>程序启动时如何初始化安装项目依赖  </li>
-<li>项目依赖如何动态的添加与删除<br>围绕以上三个问题，逐一解决，那么Hyac项目中的依赖管理部分就可以完成了，接下来就是具体的实现方案。</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/microsoft/monaco-editor">Monaco Editor</a> </li>
+<li><a target="_blank" rel="noopener" href="https://github.com/microsoft/monaco-editor">CodeMirror</a> </li>
+<li><a target="_blank" rel="noopener" href="https://github.com/microsoft/monaco-editor">Ace Editor</a></li>
 </ul>
-<h2 id="实现步骤"><a href="#实现步骤" class="headerlink" title="实现步骤"></a>实现步骤</h2><h3 id="依赖数据的存储与格式"><a href="#依赖数据的存储与格式" class="headerlink" title="依赖数据的存储与格式"></a>依赖数据的存储与格式</h3><p>首先需要考虑继续使用 requirements.txt 文件是否合适，如果继续使用会有以下几个问题：  </p>
+<p>通过了解，Monaco 项目是从 VS Code 项目中分离出来的一个在线代码编辑器，我就无条件的信任了Monaco，现在回想起来，自己就像是一个愚笨的人迷信所谓“专家”一样。</p>
+<h1 id="我都做了什么“探索”"><a href="#我都做了什么“探索”" class="headerlink" title="我都做了什么“探索”"></a>我都做了什么“探索”</h1><h2 id="使用-Monaco-官方示例"><a href="#使用-Monaco-官方示例" class="headerlink" title="使用 Monaco 官方示例"></a>使用 Monaco 官方示例</h2><p><img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/upload/202507302208109.png" srcset="/img/loading.gif" lazyload><br>我相信无论任何人接触第一个新的组件、插件、包。首先都会查阅有没有官方示例，即使没有具体的示例也要去看一看有没有官方文档。在刚开始接触的时候，发现除了没有文档以外，简单的创建一个编辑器也还算简单。但当我还没来得及开心的时候，第一个问题就来了。由于我的项目是 vue + typescript + vite的结构，monaco对 vite 的支持无限趋近于0。当你想要查看它的文档的时候，你就会惊喜的发现文档就是一团乱麻，不如不看。<br>我就简单的列举几个问题：  </p>
 <ul>
-<li>requirements.txt 文件的读写效率不高  </li>
-<li>当一个项目多个人操作的时候，对单个文件的读写操作会发生冲突  </li>
-<li>实现方式不优雅<br>综合以上问题，最终决定使用mongodb提供依赖数据的存储，接下来需要设计依赖数据的安装结构，因此将依赖信息放置在应用（Application）文档上，结构如下：  <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs javascript">&#123;<br>  <span class="hljs-string">&quot;app_id&quot;</span>: <span class="hljs-string">&quot;hyac_demo&quot;</span>,<br>  ...<br>  <span class="hljs-string">&quot;dependencies&quot;</span>:[<br>    &#123;<br>      <span class="hljs-string">&quot;name&quot;</span>: <span class="hljs-string">&quot;requests&quot;</span>,<br>      <span class="hljs-string">&quot;version&quot;</span>: <span class="hljs-string">&quot;0.0.1&quot;</span><br>    &#125;,<br>    &#123;<br>      <span class="hljs-string">&quot;name&quot;</span>: <span class="hljs-string">&quot;pillow&quot;</span>,<br>      <span class="hljs-string">&quot;version&quot;</span>: <span class="hljs-string">&quot;0.0.1&quot;</span><br>    &#125;<br>  ],<br>  ...<br>&#125;<br></code></pre></td></tr></table></figure></li>
+<li>Monaco 启动的时候需要创建 worker，在 vite 下如果想不报错，必须要使用 <strong>vite-plugin-monaco-editor-esm</strong>  </li>
+<li>vite 下很多monaco所需的资源文件找不到  </li>
+<li>原生的 Monaco 对代码高亮的支持很差  </li>
+<li>原生的 Monaco 根本不支持 LSP </li>
+<li>……<br>在这种情况下，我只能在社区找有没有第三方的已经实现了 高亮 + Lsp 的方案，还真让我找到了 0.5 个。</li>
 </ul>
-<h3 id="应用启动时依赖的初始化"><a href="#应用启动时依赖的初始化" class="headerlink" title="应用启动时依赖的初始化"></a>应用启动时依赖的初始化</h3><p>因为需要将依赖安装到当前的运行环境中，首先查询数据库获取当前运行环境的依赖信息，之后生成安装命令 <code>install_command = uv pip install [package name] == [ package version ] -- system</code>，接下来是实现动态安装功能的核心：</p>
-<pre><code class="python">process = await asyncio.create_subprocess_exec(
-    *install_command,
-    stdout=asyncio.subprocess.PIPE,
-    stderr=asyncio.subprocess.PIPE,
-)
-</code></pre>
-<p>之后我们可以通过获取这个管道的返回码与输出，来判断某个依赖是否安装成功。</p>
-<h3 id="如何动态的添加与删除"><a href="#如何动态的添加与删除" class="headerlink" title="如何动态的添加与删除"></a>如何动态的添加与删除</h3><p>实际开发中，这部分的实现时最简单的，首先 <code>https://pypi.org/simple/</code> 会返回当前所有 python 官方的依赖，我们可以获取到所有的依赖名称，之后通过对比来判断用户输入的依赖是否合法。如果用户输入的依赖是合法的，那么继续下一步<strong>选择某一个依赖的版本</strong>，选择版本时可以访问 <code>https://pypi.org/pypi/[package name]/json</code>接口，这个接口可以返回我们需要的信息，包括名称、描述、版本等。<br>当用户选择完毕之后，我们将用户选择的依赖添加入数据库即可。</p>
+<h2 id="使用社区对Monaco的二次封装"><a href="#使用社区对Monaco的二次封装" class="headerlink" title="使用社区对Monaco的二次封装"></a>使用社区对Monaco的二次封装</h2><p><strong>下面几个项目都是很好的项目，只是不适合我，并非说他们不好</strong></p>
+<h3 id="vue-use-monaco"><a href="#vue-use-monaco" class="headerlink" title="vue-use-monaco"></a><a target="_blank" rel="noopener" href="https://github.com/Simon-He95/vue-use-monaco">vue-use-monaco</a></h3><p><img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/upload/202507302209048.png" srcset="/img/loading.gif" lazyload><br><strong>如果你不需要LSP支持，推荐使用这个，国人开发</strong><br>这个项目代码高亮使用了 Shiki，对 Monaco 封装已至化境，但奈何缺少LSP灵根，无奈放弃（不支持LSP）。  </p>
+<h3 id="monaco-vue"><a href="#monaco-vue" class="headerlink" title="monaco-vue"></a><a target="_blank" rel="noopener" href="https://github.com/Simon-He95/vue-use-monaco">monaco-vue</a></h3><p><img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/upload/202507302207477.png" srcset="/img/loading.gif" lazyload><br>这个项目与上面的项目类似，但是这个项目对Monaco的封装更轻，基本保留Monaco的用法。奈何同样缺少LSP的支持，并且如果在此基础上进行修改，会破坏项目的结构。遂放弃……</p>
+<h3 id="codingame-的-monaco"><a href="#codingame-的-monaco" class="headerlink" title="codingame 的 monaco"></a><a target="_blank" rel="noopener" href="https://github.com/CodinGame/monaco-vscode-api">codingame 的 monaco</a></h3><p><img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/upload/202507302210018.png" srcset="/img/loading.gif" lazyload><br>这个就厉害了，相当于将 Monaco 完全重构，从最基础的 core 到高亮、LSP、第三方语言支持等，一应俱全。那么为什么最终没有确定使用它呢？主要是在完全抄官方示例都会疯狂报错，只能说在结合LSP之后，处在一个能用，但不好用的程度。鸡肋、食之无味弃之可惜（其实是我太菜了，用不好 codingame 的 monaco）。</p>
+<h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><p>如果你想要使用 高亮、多语言、多主题，那么推荐你使用vue-use-monaco，如果需要LSP，那么<strong>酌情</strong>考虑codingame 的 monaco。当你想基于Monaco开发之前，你就要做好AI的回答“也并不靠谱”的准备。在被 monaco 毒打之后，我真的没招了，接下来只能将开发方向转向 CodeMirror</p>
+<h1 id="转向-CodeMirror"><a href="#转向-CodeMirror" class="headerlink" title="转向 CodeMirror"></a>转向 CodeMirror</h1><p>转向 CodeMirror（以下简称CM） 之后才发现，CM 天生支持ES6，引入包变得超级简单，不用将时间和精力浪费在解决开发环境的问题，不用处理worker，不用处理前端资源加载等问题。同时 CM 官方维护了很多插件，基本能满足所有的要求。而且AI对CM的支持远远高于Monaco，即使如此 CM 也并不是 100% 完美，它在界面的美观度方面明显不如 Monaco，但是我知足了，因为能给我的生命省下来几个小时，何乐而不为呢？</p>
+<h4 id="写在后面"><a href="#写在后面" class="headerlink" title="写在后面"></a>写在后面</h4><p>以上讲述的内容都是围绕前端展开，有关python的LSP 后端我会抽空将其从 Hyac 项目中剥离出来，就这样吧。</p>
+<p>wicos 2025&#x2F;07&#x2F;30</p>
 
                 
               </div>
@@ -367,8 +369,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>Hyac 开发二：应用容器私有依赖安装的实现</div>
-      <div>https://www.wicos.me/jishu/1164/</div>
+      <div>Hyac 开发四：我与Monaco Editor + Lsp 的爱恨情仇</div>
+      <div>https://www.wicos.me/jishu/1166/</div>
     </div>
     <div class="license-meta">
       
@@ -412,9 +414,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/jishu/1165/" title="Hyac 开发三：应用容器环境变量的动态加载与持久化">
+                      <a href="/jishu/1164/" title="Hyac 开发二：应用容器私有依赖安装的实现">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">Hyac 开发三：应用容器环境变量的动态加载与持久化</span>
+                        <span class="hidden-mobile">Hyac 开发二：应用容器私有依赖安装的实现</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -422,8 +424,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/jishu/1166/" title="Hyac 开发四：我与Monaco Editor + Lsp 的爱恨情仇">
-                        <span class="hidden-mobile">Hyac 开发四：我与Monaco Editor + Lsp 的爱恨情仇</span>
+                      <a href="/jishu/1162/" title="ESP32 使用 Arduino 连接加密的 MQTT 服务器">
+                        <span class="hidden-mobile">ESP32 使用 Arduino 连接加密的 MQTT 服务器</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>

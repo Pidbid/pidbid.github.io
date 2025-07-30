@@ -240,7 +240,7 @@
     
       <div class="col-12 col-md-4 m-auto index-img">
         <a href="/jishu/1163/" target="_blank">
-          <img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/upload/202506030814411.png" srcset="/img/loading.gif" lazyload alt="Hyac 开发一：一切从重构开始">
+          <img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/upload/202507302126818.png" srcset="/img/loading.gif" lazyload alt="Hyac 开发一：一切从重构开始">
         </a>
       </div>
     
@@ -255,7 +255,7 @@
       
       <a class="index-excerpt " href="/jishu/1163/" target="_blank">
         <div>
-          写在前面Hyac 是曾经做过的一个项目，但我认为曾经的自己没有把它做的更好，所以重新将其重构出来，也计划将其作为我开源生涯中到目前为止最复杂的项目，同时我更加的希望此项目可以帮助更多的人。    开始Hyac 是什么 Hyac 的名字取自 Hyacinthus 风信子终极的 Hyac 是一个 可伸缩的、弹性的、高性能的 Python Serverless 框架。一言以蔽之，Hyac 就是一个支
+          写在前面Hyac 是曾经做过的一个项目，但我认为曾经的自己没有把它做的更好，所以重新将其重构出来，也计划将其作为我开源生涯中到目前为止最复杂的项目，同时我更加的希望此项目可以帮助更多的人。    开始Hyac 是什么 Hyac 的名字没有任何意义，只是一个名字，但是Hyac的logo是一只“新疆沙漠跳鼠”终极的 Hyac 是一个 可伸缩的、弹性的、高性能的 Python Serverless
         </div>
       </a>
 
@@ -309,7 +309,7 @@
     
       <div class="col-12 col-md-4 m-auto index-img">
         <a href="/jishu/1165/" target="_blank">
-          <img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/upload/202506172247822.jpg" srcset="/img/loading.gif" lazyload alt="Hyac 开发三：应用容器环境变量的动态加载与持久化">
+          <img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/upload/202507302227551.jpg" srcset="/img/loading.gif" lazyload alt="Hyac 开发三：应用容器环境变量的动态加载与持久化">
         </a>
       </div>
     
@@ -324,7 +324,7 @@
       
       <a class="index-excerpt " href="/jishu/1165/" target="_blank">
         <div>
-          等待补充
+          无需重启即可实现环境变量的实时热更新在构建 FaaS (Function as a Service) 平台时，一个常见但棘手的挑战是如何高效、动态地管理用户函数的环境变量。传统的做法，如使用 .env 文件或在容器启动时注入变量，通常需要重启函数实例才能使变更生效。这不仅影响了服务的可用性，也降低了开发的灵活性。 在项目 Hyac 中，我设计并实现了一套基于 MongoDB Change Str
         </div>
       </a>
 
@@ -394,6 +394,75 @@
       <a class="index-excerpt " href="/jishu/1164/" target="_blank">
         <div>
           写在前面对于一个Faas框架来说，每一个应用容器都是独立的开发环境，在独立的开发环境中，实现特定的依赖安装是非常必要的。   实现思路Hyac的运行逻辑是 server 管理多个app runtime，每一个 runtime 都在单独的 docker 容器中，在每个容器启动之后，在依赖安装部分，需要执行两个操作，首先安装公共依赖（后续为了启动速度的优化，可能会将系统依赖打包至image内），其次
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2025-06-03 00:00" pubdate>
+              2025-06-03
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/jishu/" class="category-chain-item">技术</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Python/">#Python</a>
+            
+              <a href="/tags/Hyac/">#Hyac</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/jishu/1166/" target="_blank">
+          <img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/upload/202507302131869.jpg" srcset="/img/loading.gif" lazyload alt="Hyac 开发四：我与Monaco Editor + Lsp 的爱恨情仇">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/jishu/1166/" target="_blank">
+          Hyac 开发四：我与Monaco Editor + Lsp 的爱恨情仇
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt " href="/jishu/1166/" target="_blank">
+        <div>
+          写在前面 如果你要做web代码编辑器，那么你第一个踩的坑就是 —— Monaco，有时候及时放弃才是一种好习惯最近在开发 Hyac，由于需要支持Python在线编辑，同时我还希望能够支持Lsp，因此不得不选择一款web编辑器，我与Monaco的爱恨情仇从此开始……    为什么是 Monaco Editor目前市面上可用的web编辑器项目不多，大概只有以下这三款：  Monaco Editor
         </div>
       </a>
 
@@ -809,66 +878,6 @@
             <i class="iconfont icon-date"></i>
             <time datetime="2024-09-24 11:33" pubdate>
               2024-09-24
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/jishu/" class="category-chain-item">技术</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-      <div class="col-12 col-md-4 m-auto index-img">
-        <a href="/jishu/1155/" target="_blank">
-          <img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/upload/202405101422119.JPG" srcset="/img/loading.gif" lazyload alt="常用工具合集总结">
-        </a>
-      </div>
-    
-    <article class="col-12 col-md-8 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/jishu/1155/" target="_blank">
-          常用工具合集总结
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt " href="/jishu/1155/" target="_blank">
-        <div>
-          由于日常使用工具比较多，在更换PC或者手机后常常需要重新寻找，因此为了日后方便的随时寻找，特别的总结一下所需的工具。所用的工具不限于windows以及android平台，mac平台暂时已经放弃  PicGo 一个用于快速上传图片并获取图片 URL 链接的工具PicGo支持图片上传至多个OSS中，本博客所用的所有图片都是通过PicGo进行上传，可以在github的releases内下载。 uT
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2024-05-09 21:58" pubdate>
-              2024-05-09
             </time>
           </div>
         
