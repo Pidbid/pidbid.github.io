@@ -4,6 +4,33 @@
   
   
   <entry>
+    <title>Hyac 现存的问题以及发展方向</title>
+    <link href="/jishu/1167/"/>
+    <url>/jishu/1167/</url>
+    
+    <content type="html"><![CDATA[<h2 id="Hyac-目前存在的问题有"><a href="#Hyac-目前存在的问题有" class="headerlink" title="Hyac 目前存在的问题有"></a>Hyac 目前存在的问题有</h2><h3 id="lsp-功能"><a href="#lsp-功能" class="headerlink" title="lsp 功能"></a>lsp 功能</h3><p>由于代码储存在数据库中，lsp的实现要通过shim或者虚拟文件的方式，都是值得斟酌的问题</p><h3 id="日志功能"><a href="#日志功能" class="headerlink" title="日志功能"></a>日志功能</h3><ul><li>目前事实日志使用ws与前端交互，还需要进一步考虑重连自己切换函数后日志重新加载的问题。  </li><li>函数日志显示方式考虑调整为弹窗的模式，可以保证用户在编辑函数的时候，查看日志不会影响编辑任务。</li></ul><h3 id="Ai功能"><a href="#Ai功能" class="headerlink" title="Ai功能"></a>Ai功能</h3><p>Ai编码部分需要完善，之前考虑使用rag，但是会增加用户部署设备的门槛，我希望2g内存下能稳定运行至少3个app，还需要思考真正的实现方式。或许可以创建一个统一的ai服务，用户直接调用，但是可能会涉及用户的代码隐私，比较难取舍。</p><h3 id="自动化测试"><a href="#自动化测试" class="headerlink" title="自动化测试"></a>自动化测试</h3><p>虽然目前都是dev版本，但是如果未来发release版本，必须对基准功能做完备的测试，这一点要提早准备。计划使用pytest，但是还没有敲定，也没有开始。</p><h2 id="hyac-未来的发展"><a href="#hyac-未来的发展" class="headerlink" title="hyac 未来的发展"></a>hyac 未来的发展</h2><p>关于未来发展方向的问题，我做了如下思考。首先，hyac的定位是服务个人开发者的pyton云函数项目，所以在开发之初就使用了<strong>docker compose</strong>。但是会带来一些负载均衡，弹性扩容等方面的问题。如果我将hyac整体切换到k8s，那么是不是就违背了我的初衷？因为个人开发者一般没有高性能的设备运行hyac，目前3个app基本可以在2g内存的设备下运行。如果使用k8s，用户的设备最低可能都需要4g。但如果使用docker compose做负载均衡，带来的额外内存开销可能与k8s相当。因此，这是一个我必须尽快确定以及选择的问题。</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>技术</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>Python</tag>
+      
+      <tag>Hyac</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>Hyac 开发四：我与Monaco Editor + Lsp 的爱恨情仇</title>
     <link href="/jishu/1166/"/>
     <url>/jishu/1166/</url>
