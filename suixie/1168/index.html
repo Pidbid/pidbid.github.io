@@ -28,7 +28,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/upload/202508212353850.JPG">
 <meta property="article:published_time" content="2025-08-21T00:00:00.000Z">
-<meta property="article:modified_time" content="2025-08-28T09:29:50.489Z">
+<meta property="article:modified_time" content="2025-08-28T17:02:58.653Z">
 <meta property="article:author" content="Wicos">
 <meta property="article:tag" content="摩托车">
 <meta property="article:tag" content="思考">
@@ -91,7 +91,9 @@
 
 
   
-<meta name="generator" content="Hexo 6.3.0"></head>
+<!-- hexo injector head_end start -->
+    <link rel="stylesheet" href="/css/gallery.css" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="/css/music_player.css" type="text/css"><!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
 
 
 <body>
@@ -242,7 +244,7 @@
         <i class="iconfont icon-chart"></i>
         
           <!-- compatible with older versions-->
-          690 字
+          697 字
         
       </span>
     
@@ -301,6 +303,38 @@
 <p>下午五点多抵达括苍山，说实话山路并不算曲折，起码以萧山的一些山来说，算是比较平缓的。当即将抵达山顶时，发现山顶处被施工单位使用围栏围了起来。索性找了一个合适的位置搭建帐篷，夜里躺在帐篷里可以清楚的看到月亮。当我躺在帐篷中，凉风从身上吹过，一天的疲惫便去了大半，不多久困意袭来，慢慢的就睡了过去。正值夏日，我也并没有将外账认真的打好地钉。夜里山上的冷风一阵阵的吹，倒有几分寒冷的感觉。坐起来打开睡袋，随意的盖在身上，一觉到天明。  </p>
 <p>摩托车很独特，但是又没有那么独特。选择它并不是因为它的独特，而是它能给我带来探索的感觉。它可以满足我探索的欲望，走在乡间小路，两旁都是杂草。我就像是一个探险家，肆意的开拓未知的版图，这大概就是我骑摩托车的最大目的吧。  </p>
 
+<div id="musicPlayerContainer" class="music-player">
+  <audio id="audioPlayer" src="https://music.163.com/song/media/outer/url?id=2081888997" preload="metadata"></audio>
+
+  <div class="album-cover" id="albumCover">
+    <img src="https://p1.music.126.net/RGZg2sSnUo-knCNjPgk1zg==/109951168912903969.jpg?param=250y250" srcset="/img/loading.gif" lazyload alt="专辑封面" id="albumImage">
+  </div>
+
+  <div class="player-controls">
+    <div class="info-controls-row">
+      <div class="song-info">
+        <div class="song-title" id="songTitle">金榜题名</div>
+        <div class="song-artist" id="songArtist">王朝1982</div>
+      </div>
+  
+      <div class="controls">
+        <div class="play-pause-btn" id="playPauseBtn">
+          <svg class="icon" viewBox="0 0 24 24" id="playIcon"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>
+          <svg class="icon" viewBox="0 0 24 24" id="pauseIcon" style="display: none;"><path fill="currentColor" d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+        </div>
+        
+        <div class="volume-btn" id="volumeBtn">
+          <svg class="icon volume-unmuted-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+          <svg class="icon volume-muted-icon" style="display: none;" viewBox="0 0 24 24"><path fill="currentColor" d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="progress-container" id="progressContainer">
+      <div class="progress-bar" id="progressBar"><div class="progress-handle" id="progressHandle"></div></div>
+    </div>
+  </div>
+</div>
                 
               </div>
             
@@ -726,5 +760,7 @@
   <noscript>
     <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
   </noscript>
-</body>
+<!-- hexo injector body_end start -->
+    <script src="/js/gallery.js" async></script>
+<script src="/js/music_player.js"></script><!-- hexo injector body_end end --></body>
 </html>
