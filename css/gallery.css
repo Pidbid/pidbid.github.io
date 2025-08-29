@@ -5,7 +5,7 @@
     line-height: 1.6;
     margin: 2em auto;
     padding: 1em;
-    background-color: #6e6e73; 
+    background-color: #6e6e63; 
     border-radius: 12px;
 }
 
@@ -40,6 +40,11 @@
     align-items: center;
 }
 
+.hexo-apple-gallery .gallery-info:empty,
+.hexo-apple-gallery .meta-data:empty {
+    display: none;
+}
+
 /* 瀑布流布局样式 */
 .hexo-apple-gallery .masonry-gallery {
     column-gap: 16px;
@@ -69,6 +74,34 @@
     color: #c7c7cc;
 }
 
+/* “加载更多” 按钮样式 */
+.hexo-apple-gallery .gallery-more-btn {
+    display: block;
+    width: fit-content;
+    margin: 20px auto 0;
+    padding: 8px 20px;
+    background-color: rgba(0, 0, 0, 0.1);
+    color: inherit; 
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    text-align: center;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.hexo-apple-gallery .gallery-more-btn:hover {
+    background-color: rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
+}
+
+/* 用于初始隐藏图片的类 */
+.hexo-apple-gallery .gallery-item.initially-hidden {
+    display: none;
+}
+
+
 /* --- 灯箱预览样式 --- */
 
 .gallery-lightbox {
@@ -79,7 +112,7 @@
     height: 100%;
     background-color: rgba(0, 0, 0, 0.85);
     display: flex;
-    flex-direction: column; /* [修改] 调整布局方向为纵向 */
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     z-index: 9999;
@@ -87,7 +120,7 @@
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.3s ease, visibility 0.3s ease;
-    padding: 10px; /* 为所有元素提供边距 */
+    padding: 10px;
 }
 
 .gallery-lightbox.visible {
@@ -97,14 +130,13 @@
 
 .gallery-lightbox-image {
     max-width: 95vw;
-    /* [修改] 调整最大高度，为缩略图留出空间 */
     max-height: calc(100vh - 120px); 
     object-fit: contain;
     cursor: default;
     border-radius: 4px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.4);
     transition: transform 0.3s ease;
-    margin-bottom: 10px; /* 与缩略图的间距 */
+    margin-bottom: 10px;
 }
 
 /* --- 预览导航和关闭按钮样式 --- */
@@ -144,20 +176,19 @@
     transform: none;
 }
 
-/* --- [新增] 缩略图列表样式 --- */
+/* --- 缩略图列表样式 --- */
 .lightbox-thumbnails {
     width: 100%;
     max-width: 80vw;
-    flex-shrink: 0; /* 防止容器被压缩 */
+    flex-shrink: 0;
     display: flex;
     justify-content: center;
     gap: 10px;
     padding-top: 10px;
     overflow-x: auto;
-    -webkit-overflow-scrolling: touch; /* 优化移动端滚动体验 */
+    -webkit-overflow-scrolling: touch;
 }
 
-/* 隐藏滚动条 */
 .lightbox-thumbnails::-webkit-scrollbar {
     display: none;
 }
@@ -171,7 +202,7 @@
     border: 2px solid transparent;
     transition: border-color 0.2s ease, opacity 0.2s ease;
     opacity: 0.6;
-    flex-shrink: 0; /* 防止缩略图被压缩 */
+    flex-shrink: 0;
 }
 
 .lightbox-thumbnail:hover {
