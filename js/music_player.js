@@ -43,7 +43,12 @@ if (document.getElementById('musicPlayerContainer')) {
     // 绑定 audio 元素的事件
     audio.onplay = updatePlayPauseUI;
     audio.onpause = updatePlayPauseUI;
-    audio.onended = () => { progressBar.style.width = '0%'; audio.currentTime = 0; };
+    audio.onended = () => {
+      progressBar.style.width = '0%';
+      if (!isNaN(audio.duration)) {
+        audio.currentTime = 0;
+      }
+    };
     audio.ontimeupdate = function() {
       if (!isDraggingProgress) {
         // 使用 || 0 来防止 duration 为 NaN 时出错
@@ -56,18 +61,27 @@ if (document.getElementById('musicPlayerContainer')) {
     albumCover.addEventListener('click', togglePlayPause);
     playPauseBtn.addEventListener('click', togglePlayPause);
 
+    // 安全地设置音频当前时间
+    function setAudioTime(position) {
+      if (isNaN(audio.duration) || !isFinite(audio.duration) || audio.duration <= 0) {
+        return;
+      }
+      const clampedPos = Math.max(0, Math.min(position, 1));
+      audio.currentTime = clampedPos * audio.duration;
+    }
+
     // 进度条处理
     progressContainer.addEventListener('click', function(e) {
       const rect = progressContainer.getBoundingClientRect();
       const pos = (e.clientX - rect.left) / rect.width;
-      audio.currentTime = pos * audio.duration;
+      setAudioTime(pos);
     });
     progressHandle.addEventListener('mousedown', () => { isDraggingProgress = true; });
     document.addEventListener('mousemove', function(e) {
       if (isDraggingProgress) {
         const rect = progressContainer.getBoundingClientRect();
         const pos = (e.clientX - rect.left) / rect.width;
-        audio.currentTime = Math.max(0, Math.min(pos, 1)) * audio.duration;
+        setAudioTime(pos);
       }
     });
     document.addEventListener('mouseup', () => { isDraggingProgress = false; });
