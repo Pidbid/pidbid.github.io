@@ -28,7 +28,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/upload/202509052346319.JPG">
 <meta property="article:published_time" content="2025-10-21T00:00:00.000Z">
-<meta property="article:modified_time" content="2026-05-28T14:05:56.927Z">
+<meta property="article:modified_time" content="2026-06-01T14:00:07.023Z">
 <meta property="article:author" content="Wicos">
 <meta property="article:tag" content="思考">
 <meta property="article:tag" content="哲学">
@@ -464,7 +464,7 @@
     Fluid.utils.loadComments('#comments', function() {
       Fluid.utils.createScript('https://lib.baomitu.com/twikoo/1.6.8/twikoo.all.min.js', function() {
         var options = Object.assign(
-          {"envId":"https://comment.wicos.me","region":"ap-shanghai","path":"window.location.pathname"},
+          {"envId":"https://comment.wicos.me/.netlify/functions/twikoo","region":null,"path":"window.location.pathname"},
           {
             el: '#twikoo',
             path: 'window.location.pathname',
