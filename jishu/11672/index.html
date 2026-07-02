@@ -19,16 +19,16 @@
   <meta name="author" content="Wicos">
   <meta name="keywords" content="">
   
-    <meta name="description" content="在日常 Vibe coding 时，AI 写出来的代码即使很完整，很全面。但是作为原始“智能体”——人类而言，总是充满着不信任(至少目前是这样)。对 AI 的怀疑包括：代码鲁棒性如何？是否处理了极值？是否引入了新的问题？是否写了死代码？代码兼容性怎么样？是否存在冗余代码？因此，控制代码的质量就成了重要的事情。对于代码质量控制，我一般从测试与审查两个角度触发。就测试而言，核心主旨是“从事实出发”。测">
+    <meta name="description" content="在日常 Vibe coding 时，AI 写出来的代码即使很完整，很全面。但是作为原始“智能体”——人类而言，总是充满着不信任(至少目前是这样)。对 AI 的怀疑包括：代码鲁棒性如何？是否处理了极值？是否引入了新的问题？是否写了死代码？代码兼容性怎么样？是否存在冗余代码？因此，控制代码的质量就成了重要的事情。 对于代码质量控制，我一般从测试与审查两个角度触发。就测试而言，核心主旨是“从事实出">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Vibe coning 视角下的测试和审查">
 <meta property="og:url" content="https://www.wicos.me/jishu/11672/index.html">
 <meta property="og:site_name" content="Wicos&#39;s Blog.">
-<meta property="og:description" content="在日常 Vibe coding 时，AI 写出来的代码即使很完整，很全面。但是作为原始“智能体”——人类而言，总是充满着不信任(至少目前是这样)。对 AI 的怀疑包括：代码鲁棒性如何？是否处理了极值？是否引入了新的问题？是否写了死代码？代码兼容性怎么样？是否存在冗余代码？因此，控制代码的质量就成了重要的事情。对于代码质量控制，我一般从测试与审查两个角度触发。就测试而言，核心主旨是“从事实出发”。测">
+<meta property="og:description" content="在日常 Vibe coding 时，AI 写出来的代码即使很完整，很全面。但是作为原始“智能体”——人类而言，总是充满着不信任(至少目前是这样)。对 AI 的怀疑包括：代码鲁棒性如何？是否处理了极值？是否引入了新的问题？是否写了死代码？代码兼容性怎么样？是否存在冗余代码？因此，控制代码的质量就成了重要的事情。 对于代码质量控制，我一般从测试与审查两个角度触发。就测试而言，核心主旨是“从事实出">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/upload/202508290037526.JPG">
 <meta property="article:published_time" content="2026-06-29T00:00:00.000Z">
-<meta property="article:modified_time" content="2026-06-29T08:37:41.858Z">
+<meta property="article:modified_time" content="2026-07-02T07:11:12.322Z">
 <meta property="article:author" content="Wicos">
 <meta property="article:tag" content="AI">
 <meta property="article:tag" content="思考">
@@ -243,7 +243,7 @@
         <i class="iconfont icon-chart"></i>
         
           <!-- compatible with older versions-->
-          751 字
+          747 字
         
       </span>
     
@@ -297,7 +297,10 @@
             
               <div class="markdown-body">
                 
-                <p>在日常 Vibe coding 时，AI 写出来的代码即使很完整，很全面。但是作为原始“智能体”——人类而言，总是充满着不信任(至少目前是这样)。对 AI 的怀疑包括：代码鲁棒性如何？是否处理了极值？是否引入了新的问题？是否写了死代码？代码兼容性怎么样？是否存在冗余代码？因此，控制代码的质量就成了重要的事情。<br>对于代码质量控制，我一般从测试与审查两个角度触发。就测试而言，核心主旨是“从事实出发”。测试体系必须在当前项目的真实结构上，而不是凭空揣测的结果。其次，一个测试必须有完整的可观测结果，什么输入、什么输出、什么异常、权限是什么、回退是什么。这些都必须要有明确的、可观测到的结果，才方便下一步的测试编写。在编写测试的过程中，引入** 多角色测试 **的方式，从测试编排负责人、规格质量测试员、对抗性测试员、业务契约测试员、运行时与集成测试员以及验证审计员这几个测试角色出发，覆盖整个测试流程。多角色测试的目的是通过多种角色的设定，避免单一视角下的“失明”情况。对抗性测试的角色则是以另外的视角确定可能存在的更大的失败面。最后，测试还必须有结构化的产物，不能把测试的结果停留在自然语言描述部分。结构化的数据对AI模型来说更友好，后续使用也更方便，补测的位置也会更明确。<br>既然测试已经交给 AI 完成，那么代码审查&#x2F;初审交给 AI 同样合适。codex cli 与 claude cli 都有内置的 review 实现方案。无论怎么实现，基本都遵循一个最底层的约束“审查的结论必须有证据”。首先将修改的文件、pr 按照修改进行分类，分类的目的是规避单一视角的局限，让不同的审查视角聚焦不同的风险面。之后将检查到的风险配合证据和严重程度以格式化形式输出，之后修复就会更方便。同时，多个子代理审查后，将结论统一告诉主代理。主代理作为 Moderator 逐条复核，最终确定真实的 review 结论。还需要给每一条裁决的结论以 成立、不成立、需要信息补充、建议这几个优先判断，之后再按照 P0 向下依次输出。从根本上排除子代理的主观结论，以证据出发进行裁决。<br>最后说些题外话，随着 AI 模型的发展，这些技巧在未来可能变得一文不值，哈哈哈哈。</p>
+                <p><img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/upload/202508290037526.JPG" srcset="/img/loading.gif" lazyload>  </p>
+<p>在日常 Vibe coding 时，AI 写出来的代码即使很完整，很全面。但是作为原始“智能体”——人类而言，总是充满着不信任(至少目前是这样)。对 AI 的怀疑包括：代码鲁棒性如何？是否处理了极值？是否引入了新的问题？是否写了死代码？代码兼容性怎么样？是否存在冗余代码？因此，控制代码的质量就成了重要的事情。</p>
+<p>对于代码质量控制，我一般从测试与审查两个角度触发。就测试而言，核心主旨是“从事实出发”。测试体系必须在当前项目的真实结构上，而不是凭空揣测的结果。其次，一个测试必须有完整的可观测结果，什么输入、什么输出、什么异常、权限是什么、回退是什么。这些都必须要有明确的、可观测到的结果，才方便下一步的测试编写。在编写测试的过程中，引入** 多角色测试 **的方式，从测试编排负责人、规格质量测试员、对抗性测试员、业务契约测试员、运行时与集成测试员以及验证审计员这几个测试角色出发，覆盖整个测试流程。多角色测试的目的是通过多种角色的设定，避免单一视角下的“失明”情况。对抗性测试的角色则是以另外的视角确定可能存在的更大的失败面。最后，测试还必须有结构化的产物，不能把测试的结果停留在自然语言描述部分。结构化的数据对AI模型来说更友好，后续使用也更方便，补测的位置也会更明确。</p>
+<p>既然测试已经交给 AI 完成，那么代码审查&#x2F;初审交给 AI 同样合适。codex cli 与 claude cli 都有内置的 review 实现方案。无论怎么实现，基本都遵循一个最底层的约束“审查的结论必须有证据”。首先将修改的文件、pr 按照修改进行分类，分类的目的是规避单一视角的局限，让不同的审查视角聚焦不同的风险面。之后将检查到的风险配合证据和严重程度以格式化形式输出，之后修复就会更方便。同时，多个子代理审查后，将结论统一告诉主代理。主代理作为 Moderator 逐条复核，最终确定真实的 review 结论。还需要给每一条裁决的结论以 成立、不成立、需要信息补充、建议这几个优先判断，之后再按照 P0 向下依次输出。从根本上排除子代理的主观结论，以证据出发进行裁决。<br>最后说些题外话，随着 AI 模型的发展，这些技巧在未来可能变得一文不值。</p>
 
 <div id="musicPlayerContainer" class="music-player">
   <audio id="audioPlayer" src="https://music.163.com/song/media/outer/url?id=3316537375" preload="metadata"></audio>
@@ -421,6 +424,12 @@
                 <div class="post-prevnext my-3">
                   <article class="post-prev col-6">
                     
+                    
+                      <a href="/jishu/11673/" title="深入BLE低功耗蓝牙">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">深入BLE低功耗蓝牙</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
                     
                   </article>
                   <article class="post-next col-6">

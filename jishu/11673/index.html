@@ -1,0 +1,791 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/uploads/logo.ico">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Wicos">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="写在前面 最近在做蓝牙相关的工作，也终于有机会能由浅入深的把蓝牙的工作流程梳理一遍。梳理整个流程时，顺便写下这篇博客。  总的来说，蓝牙是工作在 2.4GHz ISM 频段上的一种无线通信协议。经典蓝牙和低功耗蓝牙分别有79个和40个信道可用，本文只关注低功耗蓝牙，仅涉及经典蓝牙中与BLE共同之处。 基础协议栈   如果只关注蓝牙在应用层的实现，往往只需要关注蓝牙的广播、服务即可，但是如果需">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深入BLE低功耗蓝牙">
+<meta property="og:url" content="https://www.wicos.me/jishu/11673/index.html">
+<meta property="og:site_name" content="Wicos&#39;s Blog.">
+<meta property="og:description" content="写在前面 最近在做蓝牙相关的工作，也终于有机会能由浅入深的把蓝牙的工作流程梳理一遍。梳理整个流程时，顺便写下这篇博客。  总的来说，蓝牙是工作在 2.4GHz ISM 频段上的一种无线通信协议。经典蓝牙和低功耗蓝牙分别有79个和40个信道可用，本文只关注低功耗蓝牙，仅涉及经典蓝牙中与BLE共同之处。 基础协议栈   如果只关注蓝牙在应用层的实现，往往只需要关注蓝牙的广播、服务即可，但是如果需">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/upload/202508282116613.JPG">
+<meta property="article:published_time" content="2026-07-02T00:00:00.000Z">
+<meta property="article:modified_time" content="2026-07-02T07:11:12.327Z">
+<meta property="article:author" content="Wicos">
+<meta property="article:tag" content="小程序">
+<meta property="article:tag" content="蓝牙">
+<meta property="article:tag" content="NFC">
+<meta property="article:tag" content="腾讯">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/upload/202508282116613.JPG">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>深入BLE低功耗蓝牙 - Wicos&#39;s Blog.</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"www.wicos.me","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<!-- hexo injector head_end start -->
+    <link rel="stylesheet" href="/css/gallery.css" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="/css/music_player.css" type="text/css"><!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Wicos&#39;s Blog.</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>主页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/suixie" target="_self">
+                <i class="iconfont icon-pen"></i>
+                <span>随写</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/jishu" target="_self">
+                <i class="iconfont icon-code"></i>
+                <span>技术</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/xiangmu" target="_self">
+                <i class="iconfont icon-note"></i>
+                <span>项目</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/gallery/" target="_self">
+                <i class="iconfont icon-image"></i>
+                <span>画廊</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/upload/202508282116613.JPG') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="深入BLE低功耗蓝牙"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2026-07-02 00:00" pubdate>
+          星期四, 七月 2日 2026, 12:00 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          <!-- compatible with older versions-->
+          1.9k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          <!-- compatible with older versions-->
+          16 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">深入BLE低功耗蓝牙</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p><img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/upload/202508282116613.JPG" srcset="/img/loading.gif" lazyload alt="蓝色蜻蜓">  </p>
+<h1 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h1><blockquote>
+<p>最近在做蓝牙相关的工作，也终于有机会能由浅入深的把蓝牙的工作流程梳理一遍。梳理整个流程时，顺便写下这篇博客。</p>
+</blockquote>
+<p>总的来说，蓝牙是工作在 2.4GHz ISM 频段上的一种无线通信协议。经典蓝牙和低功耗蓝牙分别有79个和40个信道可用，本文只关注低功耗蓝牙，仅涉及经典蓝牙中与BLE共同之处。</p>
+<h1 id="基础协议栈"><a href="#基础协议栈" class="headerlink" title="基础协议栈"></a>基础协议栈</h1><p><img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/upload/6ee265fe-d25d-436d-afd7-46e657d6b93c.png" srcset="/img/loading.gif" lazyload alt="蓝牙协议栈层级">  </p>
+<p>如果只关注蓝牙在应用层的实现，往往只需要关注蓝牙的广播、服务即可，但是如果需要关注蓝牙的广播包是怎么发的？收发双方是如何跳频的，都需要更深入的了解 Conyroller 控制层中的 物理层、链路层。想要了解这两个层级，就需要先从蓝牙发送的数据空口包出发。  </p>
+<h1 id="BLE-空口包结构"><a href="#BLE-空口包结构" class="headerlink" title="BLE 空口包结构"></a>BLE 空口包结构</h1><p><img src="https://wicos-blog.oss-cn-hangzhou.aliyuncs.com/upload/1fd11726-9e7a-406c-b591-72738edd06c9.png" srcset="/img/loading.gif" lazyload alt="BLE空口包结构示意图"></p>
+<p><strong>Preamble 前导码</strong> 通俗讲就是告诉接收方“我开始发数据了，请从这里开始接收”。在低功耗蓝牙BLE中，大部分情况下前导码都是 0x55 或 0xAA, 它是由 Access Address 最低位决定的，当最低位为 0 时，前导码是 0x55，当最低位是 1 时，前导码是 0xAA。0x55 和 0xAA 这两种前导码的设计是结合工程中的实际问题确定的，在实际的环境中可能会出现RF极性翻转等问题，导致接收到的数据解调后可能是 0x55 或 0xAA, 但是接收时通过 Access Address 最低位就能确定这个究竟是“真的”前导码，还是误触发的或者随机出现的。Preamble 的设计相当于设计两道门槛，只允许“大概率是真实数据包”的数据进入，把有限的资源分配给真正需要的数据。  </p>
+<p><strong>Access Address 访问地址</strong> 在BLE中只保留两种，一个是广播通道，一个是数据通道。广播通道固定为 <strong>0x8E89BED6</strong>, 数据通道的 Access Address 是随机的，只要生成的不是特殊的即可（特殊的包括 全0、全1、与广播通道一致等）。在实际的接收方视角下，接收的数据可能是包含噪声的，所以需要在其中定位 Preamble 和 Access Address ，达到数据筛选的目的。同时，广播通道的访问地址是固定的，但是数据通道的访问地址是随机生成的，这就需要了解到在建立数据连接之前，这个访问地址已经通过 CONNECT_IND 类型的方式携带，这一步就告诉接收方，你连接后需要接收 Access Address 是 xxx 数据。</p>
+<figure class="highlight clean"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs clean">PDU Header<br>└── PDU Type = CONNECT_IND / CONNECT_REQ<br><br>PDU Payload:<br>┌──────────────────────────────┐<br>│ InitA (<span class="hljs-number">6</span>B)                   │<br>│ AdvA  (<span class="hljs-number">6</span>B)                   │<br>│ Access Address (<span class="hljs-number">4</span>B) ← 在这里   │<br>│ CRC Init (<span class="hljs-number">3</span>B)                │<br>│ WinSize (<span class="hljs-number">1</span>B)                 │<br>│ WinOffset (<span class="hljs-number">2</span>B)               │<br>│ Interval (<span class="hljs-number">2</span>B)                │<br>│ Latency (<span class="hljs-number">2</span>B)                 │<br>│ Timeout (<span class="hljs-number">2</span>B)                 │<br>│ Channel Map (<span class="hljs-number">5</span>B)             │<br>│ Hop Increment (<span class="hljs-number">5</span> bits)       │<br>└──────────────────────────────┘<br>```  <br><br>接下来就是在开发中关注最多的PDU部分，这部分可以简单的拆解为 **PDU Header** 和 **Payload** 两部分，其中 Header 有 <span class="hljs-number">2</span> 字节，两字节的结构如下  <br><br>## PDU Header  <br>### PDU Header 结构<br></code></pre></td></tr></table></figure>
+<p>Advertising PDU Header (16 bits)<br>│<br>├── PDU Type (4 bits)<br>│     └── 指示 PDU 类型，例如 ADV_IND &#x2F; SCAN_REQ &#x2F; SCAN_RSP &#x2F; CONNECT_IND<br>│<br>├── RFU &#x2F; Reserved (1 bit)<br>│     └── 保留位，当前应为 0<br>│<br>├── ChSel (1 bit)<br>│     └── Channel Selection 标志，用于指示 Channel Selection Algorithm #2 相关能力<br>│<br>├── TxAdd (1 bit)<br>│     └── 发送方地址类型<br>│         ├── 0 &#x3D; Public Address<br>│         └── 1 &#x3D; Random Address<br>│<br>├── RxAdd (1 bit)<br>│     └── 接收方 &#x2F; 目标地址类型<br>│         ├── 0 &#x3D; Public Address<br>│         └── 1 &#x3D; Random Address<br>│<br>├── Length (6 bits)<br>│     └── Payload 长度，范围 0~63 bytes<br>│<br>└── RFU &#x2F; Reserved (2 bits)<br>      └── 保留位，当前应为 0</p>
+<table>
+<thead>
+<tr>
+<th>PDU Type</th>
+<th>RFU</th>
+<th>ChSel</th>
+<th>TxAdd</th>
+<th>RxAdd</th>
+<th>Length</th>
+<th>RFU</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>4 bits</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>6 bits</td>
+<td>2</td>
+</tr>
+</tbody></table>
+<figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><code class="hljs gherkin"><span class="hljs-comment">#### PDU Type</span><br>其中 <span class="hljs-symbol">*</span><span class="hljs-symbol">*</span>PDU Type<span class="hljs-symbol">*</span><span class="hljs-symbol">*</span> 决定了这整个PDU包是什么语义、进入什么状态机，下面是所有的 PDU Type 类型  <br><br>|<span class="hljs-string"> 分类 </span>|<span class="hljs-string"> PDU Type </span>|<span class="hljs-string"> 方向 </span>|<span class="hljs-string"> 语义 </span>|<span class="hljs-string"> 是否可连接 </span>|<span class="hljs-string"> 是否可扫描响应 </span>|<span class="hljs-string"> 状态机作用 </span>|<br>|<span class="hljs-string">------</span>|<span class="hljs-string">----------</span>|<span class="hljs-string">------</span>|<span class="hljs-string">------</span>|<span class="hljs-string">------------</span>|<span class="hljs-string">----------------</span>|<span class="hljs-string">------------</span>|<br>|<span class="hljs-string"> 广播 </span>|<span class="hljs-string"> ADV_IND </span>|<span class="hljs-string"> 广播 → 所有 </span>|<span class="hljs-string"> 可连接广播（通用设备发现） </span>|<span class="hljs-string"> ✔ </span>|<span class="hljs-string"> ✔ </span>|<span class="hljs-string"> Advertising </span>|<br>|<span class="hljs-string"> 广播 </span>|<span class="hljs-string"> ADV_DIRECT_IND </span>|<span class="hljs-string"> 广播 → 指定设备 </span>|<span class="hljs-string"> 定向连接广播 </span>|<span class="hljs-string"> ✔ </span>|<span class="hljs-string"> ❌ </span>|<span class="hljs-string"> Advertising → Connect </span>|<br>|<span class="hljs-string"> 广播 </span>|<span class="hljs-string"> ADV_SCAN_IND </span>|<span class="hljs-string"> 广播 → Scanner </span>|<span class="hljs-string"> 可扫描广播 </span>|<span class="hljs-string"> ❌ </span>|<span class="hljs-string"> ✔ </span>|<span class="hljs-string"> Advertising </span>|<br>|<span class="hljs-string"> 广播 </span>|<span class="hljs-string"> ADV_NONCONN_IND </span>|<span class="hljs-string"> 广播 → 所有 </span>|<span class="hljs-string"> 不可连接广播（Beacon） </span>|<span class="hljs-string"> ❌ </span>|<span class="hljs-string"> ❌ </span>|<span class="hljs-string"> Advertising </span>|<br><br>---<br><br>|<span class="hljs-string"> 分类 </span>|<span class="hljs-string"> PDU Type </span>|<span class="hljs-string"> 方向 </span>|<span class="hljs-string"> 语义 </span>|<span class="hljs-string"> 作用 </span>|<br>|<span class="hljs-string">------</span>|<span class="hljs-string">----------</span>|<span class="hljs-string">------</span>|<span class="hljs-string">------</span>|<span class="hljs-string">------</span>|<br>|<span class="hljs-string"> 扫描 </span>|<span class="hljs-string"> SCAN_REQ </span>|<span class="hljs-string"> Scanner → Advertiser </span>|<span class="hljs-string"> 请求更多广播信息 </span>|<span class="hljs-string"> 扫描交互 </span>|<br>|<span class="hljs-string"> 扫描 </span>|<span class="hljs-string"> SCAN_RSP </span>|<span class="hljs-string"> Advertiser → Scanner </span>|<span class="hljs-string"> 补充广播数据 </span>|<span class="hljs-string"> 扫描交互响应 </span>|<br><br>---<br><br>|<span class="hljs-string"> 分类 </span>|<span class="hljs-string"> PDU Type </span>|<span class="hljs-string"> 方向 </span>|<span class="hljs-string"> 语义 </span>|<span class="hljs-string"> 核心作用 </span>|<br>|<span class="hljs-string">------</span>|<span class="hljs-string">----------</span>|<span class="hljs-string">------</span>|<span class="hljs-string">------</span>|<span class="hljs-string">----------</span>|<br>|<span class="hljs-string"> 连接建立 </span>|<span class="hljs-string"> CONNECT_IND / CONNECT_REQ </span>|<span class="hljs-string"> Central → Peripheral（广告信道） </span>|<span class="hljs-string"> 建立连接 </span>|<span class="hljs-string"> 切换到 Data Channel </span>|<br>|<span class="hljs-string"> 连接建立 </span>|<span class="hljs-string"> AUX_CONNECT_REQ (BLE 5) </span>|<span class="hljs-string"> Central → Peripheral </span>|<span class="hljs-string"> 扩展广播连接建立 </span>|<span class="hljs-string"> 扩展广告 </span>|<br><br>---<br><br>|<span class="hljs-string"> 分类 </span>|<span class="hljs-string"> PDU Type </span>|<span class="hljs-string"> 方向 </span>|<span class="hljs-string"> 语义 </span>|<span class="hljs-string"> 状态 </span>|<br>|<span class="hljs-string">------</span>|<span class="hljs-string">----------</span>|<span class="hljs-string">------</span>|<span class="hljs-string">------</span>|<span class="hljs-string">------</span>|<br>|<span class="hljs-string"> 数据通道 </span>|<span class="hljs-string"> DATA PDU </span>|<span class="hljs-string"> 双向 </span>|<span class="hljs-string"> 已建立连接的数据传输 </span>|<span class="hljs-string"> Connection State </span>|<br><br>---<br><br>|<span class="hljs-string"> 分类 </span>|<span class="hljs-string"> PDU Type </span>|<span class="hljs-string"> 方向 </span>|<span class="hljs-string"> 语义 </span>|<span class="hljs-string"> 说明 </span>|<br>|<span class="hljs-string">------</span>|<span class="hljs-string">----------</span>|<span class="hljs-string">------</span>|<span class="hljs-string">------</span>|<span class="hljs-string">------</span>|<br>|<span class="hljs-string"> 扩展广播 </span>|<span class="hljs-string"> AUX_ADV_IND </span>|<span class="hljs-string"> 广播 → 扫描器 </span>|<span class="hljs-string"> BLE 5 扩展广播入口 </span>|<span class="hljs-string"> Secondary Channel </span>|<br>|<span class="hljs-string"> 扩展扫描 </span>|<span class="hljs-string"> AUX_SCAN_REQ </span>|<span class="hljs-string"> Scanner → Advertiser </span>|<span class="hljs-string"> 扩展扫描请求 </span>|<span class="hljs-string"> BLE 5 </span>|<br>|<span class="hljs-string"> 扩展扫描 </span>|<span class="hljs-string"> AUX_SCAN_RSP </span>|<span class="hljs-string"> Advertiser → Scanner </span>|<span class="hljs-string"> 扩展扫描响应 </span>|<span class="hljs-string"> BLE 5 </span>|<br><br><span class="hljs-comment">#### RFU 预留</span><br><span class="hljs-symbol">*</span><span class="hljs-symbol">*</span>RFU<span class="hljs-symbol">*</span><span class="hljs-symbol">*</span> 有 1 个字节，SIG将其暂时作为保留位置，等待后续扩展。 <br><br><span class="hljs-comment">#### ChSel</span><br><span class="hljs-symbol">*</span><span class="hljs-symbol">*</span>ChSel<span class="hljs-symbol">*</span><span class="hljs-symbol">*</span> Channel Section 表示是否支持 Channel Selection Algorithm <span class="hljs-comment">#2 算法，当 ChSel 为 0 时表示不支持(默认支持 CSA #1)，只有当其为 1 时才表示支持。  </span><br><br><span class="hljs-comment">#### TxAdd 和 RxAdd</span><br><span class="hljs-symbol">*</span><span class="hljs-symbol">*</span>TxAdd 和 RxAdd<span class="hljs-symbol">*</span><span class="hljs-symbol">*</span> 分别表示发送、接收方的地址类型，当为 0 时表示随机地址，当为 1 时表示公有地址。这只时一个标志位，表示公有还是随机。当表示公有时，这个地址是IEEE为厂家分配的，当表示随机时，这个地址是随机生成的。  <br><br><span class="hljs-comment">#### Length</span><br><span class="hljs-symbol">*</span><span class="hljs-symbol">*</span>Payload Lenghth<span class="hljs-symbol">*</span><span class="hljs-symbol">*</span> 表示后续 payload 的长度，目的是告诉接收方从我开始接收指定长度的数据。当广播时，payload 长度最大是 37 所以 Payload Length 是 0x25。按理说 6 bits 最大能够表示的 payload length 是 64 个字节，就是 0x40 ，但是在广播中只允许 payload 以最大 37 个字节的长度发送，这一点需要注意。  <br><br><span class="hljs-comment">### PDU Payload  </span><br>PDU Payload 的结构取决于 PDU Type，下面列举几个不同PDU Type 下 Payload 的示例<br><span class="hljs-comment">#### ADV_IND 广播</span><br></code></pre></td></tr></table></figure>
+<p>ADV_IND Payload<br>│<br>├── AdvA      (6 bytes)<br>│     └── Advertiser Address，广播设备地址<br>│<br>└── AdvData   (0–31 bytes)<br>      └── 广播数据，使用 AD Structure 组织</p>
+<figure class="highlight coq"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs coq">其中 AdvData 是由多个 AD <span class="hljs-keyword">Structure</span> 组成，下面是其结构<br></code></pre></td></tr></table></figure>
+<p>AD Structure<br>│<br>├── Length  (1 byte)<br>├── AD Type (1 byte)<br>└── AD Data (Length - 1 bytes)</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs">比如一个广播的 AdvData 数据是  <br></code></pre></td></tr></table></figure>
+<p>02 01 06<br>05 09 47 43 5F 31</p>
+<figure class="highlight coq"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs coq">那么其中 AD <span class="hljs-keyword">Structure</span> 是  <br></code></pre></td></tr></table></figure>
+<p>AD Structure 1<br>│<br>├── Length  &#x3D; 0x02<br>├── Type    &#x3D; 0x01    Flags<br>└── Data    &#x3D; 0x06</p>
+<p>AD Structure 2<br>│<br>├── Length  &#x3D; 0x05<br>├── Type    &#x3D; 0x09    Complete Local Name<br>└── Data    &#x3D; 47 43 5F 31  → “GC_1”</p>
+<figure class="highlight clean"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs clean">#### SCAN_RSP<br></code></pre></td></tr></table></figure>
+<p>SCAN_RSP Payload<br>│<br>├── AdvA           (6 bytes)<br>│     └── Advertiser Address<br>│<br>└── ScanRspData    (0–31 bytes)<br>      └── 扫描响应数据，结构和 AdvData 一样</p>
+<figure class="highlight clean"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs clean">使用 SCAN_RSP 可以让广播携带更多附加信息，相当于对 ADV_IND 的补充，比如在一个应用中需要过滤某服务ID为 xxx-xxx-xxxx 的设备，则可以通过这个将这部分数据广播出去。<br>#### CONNECT_IND<br>这是连接发起时重要的一次广播，他会携带，它的结构是  <br></code></pre></td></tr></table></figure>
+<p>CONNECT_IND Payload<br>│<br>├── InitA     (6 bytes)<br>│     └── Initiator Address，连接发起方地址，通常是 Central<br>│<br>├── AdvA      (6 bytes)<br>│     └── Advertiser Address，被连接设备地址，通常是 Peripheral<br>│<br>└── LLData    (22 bytes)<br>      └── 后续 data channel 的连接参数</p>
+<figure class="highlight ada"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs ada">我们之前谈论的 <span class="hljs-keyword">Access</span> Address 就在其 LLData 中，这次之后接收方就知道发送方每次发送的 <span class="hljs-keyword">Access</span> Address。<br></code></pre></td></tr></table></figure>
+<p>LLData (22 bytes)<br>│<br>├── Access Address       (4 bytes)<br>│     └── 后续 data channel 使用的 AA<br>│<br>├── CRC Init             (3 bytes)<br>│     └── 后续 data channel CRC 的初始值<br>│<br>├── WinSize              (1 byte)<br>│     └── 首次连接事件接收窗口大小<br>│<br>├── WinOffset            (2 bytes)<br>│     └── 首次连接事件的时间偏移<br>│<br>├── Interval             (2 bytes)<br>│     └── Connection Interval，连接事件间隔<br>│<br>├── Latency              (2 bytes)<br>│     └── Slave Latency，Peripheral 可跳过的连接事件数<br>│<br>├── Timeout              (2 bytes)<br>│     └── Supervision Timeout，连接超时时间<br>│<br>├── Channel Map          (5 bytes)<br>│     └── 37 个 data channel 的可用信道位图<br>│<br>└── Hop + SCA            (1 byte)<br>      ├── Hop Increment  (5 bits)<br>      └── Sleep Clock Accuracy, SCA (3 bits)</p>
+<figure class="highlight clean"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs clean"><br>### CRC  <br>**CRC** 这部分是 CRC24， 包含 PDU Header + PDU Payload，不包含 Preamble 和 Access Address。需要注意的是，在广播信道中 CRC 初始寄存器的值是 <span class="hljs-number">0x555555</span>，再此基础上计算。<br></code></pre></td></tr></table></figure>
+<p>crc &#x3D; CRCInit</p>
+<p>对 PDU Header + PDU Payload 的每一个 byte：<br>    从 bit0 到 bit7 依次处理</p>
+<p>每处理一个 bit：<br>    feedback &#x3D; (crc bit0) XOR (input bit)<br>    crc &#x3D; crc &gt;&gt; 1<br>    如果 feedback &#x3D;&#x3D; 1:<br>        crc &#x3D; crc XOR 0xDA6000</p>
+<pre><code class="hljs">
+以上就是BLE低功耗蓝牙的广播通道和数据通道的从基本数据流、格式。  
+
+&#123;% music "netease:27501008" %&#125;
+</code></pre>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/jishu/" class="category-chain-item">技术</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E5%B0%8F%E7%A8%8B%E5%BA%8F/" class="print-no-link">#小程序</a>
+      
+        <a href="/tags/%E8%93%9D%E7%89%99/" class="print-no-link">#蓝牙</a>
+      
+        <a href="/tags/NFC/" class="print-no-link">#NFC</a>
+      
+        <a href="/tags/%E8%85%BE%E8%AE%AF/" class="print-no-link">#腾讯</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>深入BLE低功耗蓝牙</div>
+      <div>https://www.wicos.me/jishu/11673/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Wicos</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2026年7月2日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/jishu/11672/" title="Vibe coning 视角下的测试和审查">
+                        <span class="hidden-mobile">Vibe coning 视角下的测试和审查</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="twikoo"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#comments', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/twikoo/1.6.8/twikoo.all.min.js', function() {
+        var options = Object.assign(
+          {"envId":"https://comment.wicos.me/.netlify/functions/twikoo","region":null,"path":"window.location.pathname"},
+          {
+            el: '#twikoo',
+            path: 'window.location.pathname',
+            onCommentLoaded: function() {
+              Fluid.utils.listenDOMLoaded(function() {
+                var imgSelector = '#twikoo .tk-content img:not(.tk-owo-emotion)';
+                Fluid.plugins.imageCaption(imgSelector);
+                Fluid.plugins.fancyBox(imgSelector);
+              });
+            }
+          }
+        )
+        twikoo.init(options)
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+      <a target="_blank" rel="noopener" href="https://github.com/pidbid"><span>Pidbid Github</span></a>
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+
+  
+
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="/js/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+<!-- hexo injector body_end start -->
+    <script src="/js/gallery.js" async></script>
+<script src="/js/music_player.js"></script><!-- hexo injector body_end end --></body>
+</html>
